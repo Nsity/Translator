@@ -1,5 +1,10 @@
 <resources>
-    <string name="app_name">Translator</string>
+    <string name="app_name">Переводчик</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="text_favorites">Избранное</string>
+    <string name="text_translator">Переводчик</string>
+    <string name="text_history">История</string>
+    <string name="text_settings">Настройки</string>
+    <string name="edit_text_translate">Введите текст или адрес сайта</string>
 </resources>
