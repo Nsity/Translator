@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent">
         <EditText
             android:layout_width="match_parent"
-            android:hint="@string/find_in_history"
+            android:hint="@string/find_in_favorites"
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
             android:paddingBottom="16dp"
@@ -21,8 +23,9 @@
             android:id="@+id/editText" />
         <ListView
             android:layout_width="match_parent"
-            android:id="@+id/history_list_view"
+            android:id="@+id/favorites_list_view"
             android:layout_height="wrap_content"
             android:layout_below="@+id/editText"/>
     </RelativeLayout>
+
 </android.support.design.widget.CoordinatorLayout>

@@ -23,8 +23,9 @@ public class TranslateFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_translate, container, false);
 
 
+
+
+
         return rootView;
-
-
     }
 }

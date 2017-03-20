@@ -1,33 +1,28 @@
 package com.translator.navigation;
 
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import com.translator.R;
+import com.translator.navigation.favorites.FavoritesFragment;
+import com.translator.navigation.history.HistoryFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private Fragment fragment;
     private FragmentManager fragmentManager;
     private Toolbar toolbar;
+    private LinearLayout translateLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        translateLayout = (LinearLayout) findViewById(R.id.translate_layout);
+
 
         fragmentManager = getSupportFragmentManager();
         fragment = new TranslateFragment();
@@ -49,22 +47,20 @@ public class MainActivity extends AppCompatActivity {
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem item) {
+                        setUpToolbar(item.getItemId());
+
                         switch (item.getItemId()) {
                             case R.id.action_translate:
                                 fragment = new TranslateFragment();
-                                changeFragmentTitle(getString(R.string.text_translator));
                                 break;
                             case R.id.action_history:
                                 fragment = new HistoryFragment();
-                                changeFragmentTitle(getString(R.string.text_history));
                                 break;
                             case R.id.action_favorites:
                                 fragment = new FavoritesFragment();
-                                changeFragmentTitle(getString(R.string.text_favorites));
                                 break;
                             case R.id.action_settings:
                                 fragment = new SettingsFragment();
-                                changeFragmentTitle(getString(R.string.text_settings));
                                 break;
                         }
                         final FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -75,9 +71,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void changeFragmentTitle(String title) {
+    private void setUpToolbar(int id) {
         if(toolbar == null)
             return;
-        toolbar.setTitle(title);
+
+        switch (id) {
+            case R.id.action_translate:
+                toolbar.setTitle(getString(R.string.text_translator));
+                getSupportActionBar().setDisplayShowTitleEnabled(false);
+                translateLayout.setVisibility(View.VISIBLE);
+                break;
+            case R.id.action_history:
+                toolbar.setTitle(getString(R.string.text_history));
+                getSupportActionBar().setDisplayShowTitleEnabled(true);
+                translateLayout.setVisibility(View.GONE);
+                break;
+            case R.id.action_favorites:
+                toolbar.setTitle(getString(R.string.text_favorites));
+                getSupportActionBar().setDisplayShowTitleEnabled(true);
+                translateLayout.setVisibility(View.GONE);
+                break;
+            case R.id.action_settings:
+                toolbar.setTitle(getString(R.string.text_settings));
+                getSupportActionBar().setDisplayShowTitleEnabled(true);
+                translateLayout.setVisibility(View.GONE);
+                break;
+        }
     }
 }
