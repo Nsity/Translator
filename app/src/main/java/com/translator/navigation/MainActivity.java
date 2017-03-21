@@ -13,19 +13,25 @@ import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.translator.R;
 import com.translator.navigation.favorites.FavoritesFragment;
 import com.translator.navigation.history.HistoryFragment;
 import com.translator.navigation.translation.TranslateFragment;
+import com.translator.system.CommonFunctions;
+import com.translator.system.Language;
+import com.translator.system.Preferences;
 import com.translator.system.network.CallBack;
+
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
     private Fragment translateFragment, historyFragment, favoritesFragment, settingsFragment;
     private FragmentManager fragmentManager;
     private Toolbar toolbar;
-    private LinearLayout translateLayout;
+    private RelativeLayout translateLayout;
 
     private BottomNavigationView bottomNavigationView;
 
@@ -37,10 +43,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Language.setUpLanguages();
+
+        if(CommonFunctions.StringIsNullOrEmpty(Preferences.get(Preferences.input_lang, getApplicationContext()))) {
+            Preferences.set(Preferences.input_lang, Locale.getDefault().getLanguage(), getApplicationContext());
+        }
+
+        if(CommonFunctions.StringIsNullOrEmpty(Preferences.get(Preferences.translation_lang, getApplicationContext()))) {
+            Preferences.set(Preferences.translation_lang, "en", getApplicationContext());
+        }
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        translateLayout = (LinearLayout) findViewById(R.id.translate_layout);
+        translateLayout = (RelativeLayout) findViewById(R.id.translate_layout);
 
         /*TranslationManager.getLanguages(getApplicationContext(), null, new CallBack() {
             @Override
@@ -109,24 +125,27 @@ public class MainActivity extends AppCompatActivity {
         switch (id) {
             case R.id.action_translate:
                 toolbar.setTitle(getString(R.string.text_translator));
+                toolbar.setTitleMarginStart(0);
                 getSupportActionBar().setDisplayShowTitleEnabled(false);
                 translateLayout.setVisibility(View.VISIBLE);
                 break;
             case R.id.action_history:
                 toolbar.setTitle(getString(R.string.text_history));
+                toolbar.setTitleMarginStart(36);
                 getSupportActionBar().setDisplayShowTitleEnabled(true);
                 translateLayout.setVisibility(View.GONE);
                 break;
             case R.id.action_favorites:
                 toolbar.setTitle(getString(R.string.text_favorites));
+                toolbar.setTitleMarginStart(36);
                 getSupportActionBar().setDisplayShowTitleEnabled(true);
                 translateLayout.setVisibility(View.GONE);
                 break;
-            case R.id.action_settings:
+            /*case R.id.action_settings:
                 toolbar.setTitle(getString(R.string.text_settings));
                 getSupportActionBar().setDisplayShowTitleEnabled(true);
                 translateLayout.setVisibility(View.GONE);
-                break;
+                break;*/
         }
     }
 

@@ -21,12 +21,12 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            app:contentInsetStart="0dp"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:orientation="horizontal"
-                android:gravity="center"
                 android:id="@+id/translate_layout"
                 android:layout_height="match_parent">
                 <TextView
@@ -40,6 +40,9 @@
                     android:clickable="true"
                     android:layout_marginRight="8dp"
                     android:id="@+id/input_lang"
+                    android:gravity="right"
+                    android:layout_toLeftOf="@+id/switch_lang"
+                    android:layout_centerVertical="true"
                     android:layout_height="wrap_content" />
                 <ImageButton
                     android:layout_width="wrap_content"
@@ -47,6 +50,8 @@
                     android:background="?attr/selectableItemBackground"
                     android:layout_marginRight="8dp"
                     android:focusable="false"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/switch_lang"
                     android:focusableInTouchMode="false"
                     android:layout_height="wrap_content" />
                 <TextView
@@ -54,13 +59,16 @@
                     android:textColor="@android:color/white"
                     android:text="Английский"
                     android:textSize="20sp"
+                    android:layout_toRightOf="@+id/switch_lang"
                     android:focusable="false"
+                    android:gravity="left"
+                    android:layout_centerVertical="true"
                     android:focusableInTouchMode="false"
                     android:id="@+id/translation_lang"
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:layout_height="wrap_content" />
-            </LinearLayout>
+            </RelativeLayout>
 
 
             </android.support.v7.widget.Toolbar>

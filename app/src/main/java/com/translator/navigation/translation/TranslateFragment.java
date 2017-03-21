@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -27,6 +28,8 @@ import android.widget.Toast;
 import com.translator.R;
 import com.translator.navigation.Translation;
 import com.translator.navigation.TranslationManager;
+import com.translator.system.Language;
+import com.translator.system.Preferences;
 import com.translator.system.database.HistoryDBInterface;
 import com.translator.system.network.CallBack;
 
@@ -46,6 +49,7 @@ public class TranslateFragment extends Fragment {
     private TextView resultTextView;
 
     private TextView inputLangTextView, translationLangTextView;
+    private ImageButton switchImageButton;
 
     public static final int LANG_REQUEST_CODE = 2;
 
@@ -85,8 +89,10 @@ public class TranslateFragment extends Fragment {
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         inputLangTextView = (TextView) toolbar.findViewById(R.id.input_lang);
         translationLangTextView = (TextView) toolbar.findViewById(R.id.translation_lang);
+        switchImageButton = (ImageButton) toolbar.findViewById(R.id.switch_lang);
 
-        addActionOnToolbar();
+        //add text and click listeners on buttons
+        setUpActionButtonsOnToolbar();
 
 
         inputEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -187,8 +193,10 @@ public class TranslateFragment extends Fragment {
 
 
 
-    private void addActionOnToolbar() {
-        if(inputEditText != null)
+    private void setUpActionButtonsOnToolbar() {
+
+        if(inputEditText != null) {
+            inputLangTextView.setText(Language.getLanguageDisplay(Preferences.get(Preferences.input_lang, getActivity())));
             inputLangTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -197,8 +205,10 @@ public class TranslateFragment extends Fragment {
                     startActivityForResult(intent, LANG_REQUEST_CODE);
                 }
             });
+        }
 
-        if(translationLangTextView != null)
+        if(translationLangTextView != null) {
+            translationLangTextView.setText(Language.getLanguageDisplay(Preferences.get(Preferences.translation_lang, getActivity())));
             translationLangTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -207,6 +217,25 @@ public class TranslateFragment extends Fragment {
                     startActivityForResult(intent, LANG_REQUEST_CODE);
                 }
             });
+
+        }
+
+        if(switchImageButton != null) {
+            switchImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String inputLangDisplay = inputLangTextView.getText().toString();
+                    inputLangTextView.setText(translationLangTextView.getText().toString());
+                    translationLangTextView.setText(inputLangDisplay);
+
+                    String inputLang = Preferences.get(Preferences.input_lang, getActivity());
+                    String translationLang = Preferences.get(Preferences.translation_lang, getActivity());
+                    Preferences.set(Preferences.input_lang, translationLang, getActivity());
+                    Preferences.set(Preferences.translation_lang, inputLang, getActivity());
+
+                }
+            });
+        }
     }
 
 
