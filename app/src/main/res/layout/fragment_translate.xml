@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:paddingTop="8dp"
     android:paddingRight="8dp"
@@ -9,6 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
+        android:id="@+id/touch_interceptor"
         android:layout_height="match_parent">
         <EditText
             android:layout_width="match_parent"
@@ -22,11 +24,32 @@
             android:paddingLeft="8dp"
             android:paddingRight="32dp"
             android:background="@xml/border"
+            android:imeOptions="actionDone"
             android:scrollHorizontally="false"
-            android:layout_marginBottom="16dp"
             android:id="@+id/input_text"
+            android:layout_marginBottom="8dp"
             android:inputType="text|textMultiLine">
         </EditText>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_marginBottom="16dp"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="24dp"
+                android:src="@drawable/yandex_icon"
+                android:id="@+id/yandex_icon"
+                android:layout_marginRight="4dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/yandex" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/translate_with_yandex"
+                android:layout_centerVertical="true"
+                android:gravity="right"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/yandex_icon" />
+        </RelativeLayout>
+
 
         <TextView
             android:layout_width="match_parent"

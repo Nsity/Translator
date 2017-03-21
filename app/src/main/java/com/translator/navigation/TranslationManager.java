@@ -51,5 +51,36 @@ public class TranslationManager {
     }
 
 
+    public static void getLanguages(Context context, String lang, final CallBack callBack) {
+        String method = context.getResources().getString(R.string.api_get_langs);
+
+        RequestParams params = new RequestParams();
+        params.put(context.getString(R.string.par_key), context.getString(R.string.api_key));
+
+        if(lang != null)
+            params.put(context.getString(R.string.par_ui), lang);
+
+        String url = context.getString(R.string.main_http) + method;
+
+        new AsyncHttpResponse(context, url, params,AsyncHttpResponse.CALL_POST_JSON_HTTP_RESPONSE, new CallBack<ResponseObject>() {
+            @Override
+            public void onSuccess(ResponseObject object) {
+                if (!(object.getResponse() instanceof JSONObject)) {
+                    return;
+                }
+
+                JSONObject response = (JSONObject) object.getResponse();
+                callBack.onSuccess(response);
+            }
+
+            @Override
+            public void onFailure(ResponseObject object) {
+                Log.i("TAG", String.valueOf(object.getResponse()));
+                callBack.onSuccess(object);
+            }
+        });
+    }
+
+
 
 }

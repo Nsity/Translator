@@ -19,6 +19,9 @@ public class Translation {
         this.id = id;
     }
 
+    public Translation() {
+
+    }
 
     public int getId() {
         return id;

@@ -20,7 +20,7 @@
     <string name="main_http">https://translate.yandex.net/api/v1.5/tr.json/</string>
     <string name="api_translate">translate</string>
     <string name="api_detect">detect</string>
-    <string name="api_getLangs">getLangs</string>
+    <string name="api_get_langs">getLangs</string>
 
     <string name="api_key">trnsl.1.1.20170321T081546Z.f728789c084d14b8.5ff3598127081a43522482fe04f8b5c1a3b7d03a</string>
     <string name="par_key">key</string>
@@ -29,5 +29,8 @@
     <string name="par_format">format</string>
     <string name="par_options">options</string>
     <string name="language_text">Язык текста</string>
+    <string name="par_ui">ui</string>
     <string name="language_translation">Язык перевода</string>
+    <string name="translate_with_yandex">Переведено сервисом «Яндекс.Переводчик»</string>
+    <string name="yandex">Яндекс</string>
 </resources>

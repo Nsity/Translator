@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -17,13 +18,19 @@ import com.translator.R;
 import com.translator.navigation.favorites.FavoritesFragment;
 import com.translator.navigation.history.HistoryFragment;
 import com.translator.navigation.translation.TranslateFragment;
+import com.translator.system.network.CallBack;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Fragment fragment;
+    private Fragment translateFragment, historyFragment, favoritesFragment, settingsFragment;
     private FragmentManager fragmentManager;
     private Toolbar toolbar;
     private LinearLayout translateLayout;
+
+    private BottomNavigationView bottomNavigationView;
+
+    int selectedPosition = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,42 +42,65 @@ public class MainActivity extends AppCompatActivity {
 
         translateLayout = (LinearLayout) findViewById(R.id.translate_layout);
 
+        /*TranslationManager.getLanguages(getApplicationContext(), null, new CallBack() {
+            @Override
+            public void onSuccess() {
+            }
+
+            @Override
+            public void onFail(String message) {
+            }
+        });*/
+
 
         fragmentManager = getSupportFragmentManager();
-        fragment = new TranslateFragment();
-        final FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.main_container, fragment).commit();
+        translateFragment = new TranslateFragment();
+        historyFragment = new HistoryFragment();
+        favoritesFragment = new FavoritesFragment();
+        settingsFragment = new SettingsFragment();
 
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+
+        final FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.add(R.id.main_container, translateFragment).commit();
+
+        bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem item) {
-                        setUpToolbar(item.getItemId());
-
-                        switch (item.getItemId()) {
-                            case R.id.action_translate:
-                                fragment = new TranslateFragment();
-                                break;
-                            case R.id.action_history:
-                                fragment = new HistoryFragment();
-                                break;
-                            case R.id.action_favorites:
-                                fragment = new FavoritesFragment();
-                                break;
-                            case R.id.action_settings:
-                                fragment = new SettingsFragment();
-                                break;
-                        }
-                        final FragmentTransaction transaction = fragmentManager.beginTransaction();
-                        transaction.replace(R.id.main_container, fragment).commit();
+                            displayView(item.getItemId());
                         return true;
                     }
                 });
     }
 
+
+    private void displayView(int itemId) {
+        setUpToolbar(itemId);
+
+
+        final FragmentTransaction transaction = fragmentManager.beginTransaction();
+        switch (itemId) {
+            case R.id.action_translate:
+                selectedPosition = 0;
+                transaction.replace(R.id.main_container, translateFragment).commit();
+                break;
+            case R.id.action_history:
+                selectedPosition = 1;
+                transaction.replace(R.id.main_container, historyFragment).commit();
+                break;
+            case R.id.action_favorites:
+                selectedPosition = 2;
+                transaction.replace(R.id.main_container, favoritesFragment).commit();
+                break;
+            case R.id.action_settings:
+                selectedPosition = 3;
+                transaction.replace(R.id.main_container, settingsFragment).commit();
+                break;
+        }
+    }
 
     private void setUpToolbar(int id) {
         if(toolbar == null)
@@ -98,5 +128,23 @@ public class MainActivity extends AppCompatActivity {
                 translateLayout.setVisibility(View.GONE);
                 break;
         }
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if(selectedPosition != 0) {
+            displayView(R.id.action_translate);
+            updateNavigationBarState(R.id.action_translate);
+        } else {
+            super.onBackPressed();
+        }
+
+    }
+
+
+    private void updateNavigationBarState(int actionId){
+        Menu menu = bottomNavigationView.getMenu();
+        menu.findItem(actionId).setChecked(true);
     }
 }

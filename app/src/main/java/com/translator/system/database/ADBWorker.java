@@ -35,7 +35,7 @@ public abstract class ADBWorker {
         this.context = context;
     }
 
-    public abstract int save(JSONArray objects, boolean dropAllData);
+    //public abstract int save(JSONArray objects, boolean dropAllData);
 
     protected int insert(String tableName, int nullColumnHack, ArrayList<ContentValues> values) {
         if ((values == null) || (values.size() == 0))
