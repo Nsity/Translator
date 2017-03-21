@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import com.translator.R;
 import com.translator.navigation.favorites.FavoritesFragment;
 import com.translator.navigation.history.HistoryFragment;
+import com.translator.navigation.translation.TranslateFragment;
 
 public class MainActivity extends AppCompatActivity {
 

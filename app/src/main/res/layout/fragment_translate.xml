@@ -23,8 +23,15 @@
             android:paddingRight="32dp"
             android:background="@xml/border"
             android:scrollHorizontally="false"
+            android:layout_marginBottom="16dp"
+            android:id="@+id/input_text"
             android:inputType="text|textMultiLine">
         </EditText>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:id="@+id/result_text"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
