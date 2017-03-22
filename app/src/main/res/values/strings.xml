@@ -33,4 +33,5 @@
     <string name="language_translation">Язык перевода</string>
     <string name="translate_with_yandex">Переведено сервисом «Яндекс.Переводчик»</string>
     <string name="yandex">Яндекс</string>
+    <string name="par_hint">hint</string>
 </resources>

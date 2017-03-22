@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.view.inputmethod.InputMethodSubtype;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -151,13 +152,21 @@ public class TranslateFragment extends Fragment {
                 }
 
                 if(!inputText.equals("")) {
-                    TranslationManager.translate(getActivity(), inputText, "ru-en", new CallBack<JSONObject>() {
+
+                    translateText(inputText);
+
+                    TranslationManager.detect(getActivity(), inputText, Preferences.get(Preferences.input_lang, getActivity()), new CallBack<JSONObject>() {
                         @Override
                         public void onSuccess(JSONObject result) {
-
                             try {
-                                resultTextView.setText(result.getJSONArray("text").toString());
-                            } catch (JSONException e) {
+                                String lang = result.getString(getString(R.string.par_lang));
+                                if(lang.equals(Preferences.get(Preferences.translation_lang, getActivity()))) {
+                                    switchLanguages();
+                                }
+                                setInputLang(lang);
+
+
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -224,14 +233,10 @@ public class TranslateFragment extends Fragment {
             switchImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String inputLangDisplay = inputLangTextView.getText().toString();
-                    inputLangTextView.setText(translationLangTextView.getText().toString());
-                    translationLangTextView.setText(inputLangDisplay);
-
-                    String inputLang = Preferences.get(Preferences.input_lang, getActivity());
-                    String translationLang = Preferences.get(Preferences.translation_lang, getActivity());
-                    Preferences.set(Preferences.input_lang, translationLang, getActivity());
-                    Preferences.set(Preferences.translation_lang, inputLang, getActivity());
+                    switchLanguages();
+                    inputEditText.setText(resultTextView.getText().toString());
+                    inputEditText.setSelection(inputEditText.getText().length());
+                    translateText(resultTextView.getText().toString());
 
                 }
             });
@@ -239,5 +244,47 @@ public class TranslateFragment extends Fragment {
     }
 
 
+    private void setInputLang(String lang) {
+        Preferences.set(Preferences.input_lang, lang, getActivity());
+        inputLangTextView.setText(Language.getLanguageDisplay(lang));
+    }
 
+    private void setTranslationLang(String lang) {
+        Preferences.set(Preferences.translation_lang, lang, getActivity());
+        translationLangTextView.setText(Language.getLanguageDisplay(lang));
+    }
+
+    private void switchLanguages() {
+        String inputLangDisplay = inputLangTextView.getText().toString();
+        inputLangTextView.setText(translationLangTextView.getText().toString());
+        translationLangTextView.setText(inputLangDisplay);
+
+        String inputLang = Preferences.get(Preferences.input_lang, getActivity());
+        String translationLang = Preferences.get(Preferences.translation_lang, getActivity());
+        Preferences.set(Preferences.input_lang, translationLang, getActivity());
+        Preferences.set(Preferences.translation_lang, inputLang, getActivity());
+    }
+
+
+
+    private void translateText(String inputText) {
+        String langPair = Preferences.get(Preferences.input_lang, getActivity()) + "-" + Preferences.get(Preferences.translation_lang, getActivity());
+        TranslationManager.translate(getActivity(), inputText, langPair, new CallBack<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject result) {
+
+                try {
+                    resultTextView.setText(result.getJSONArray("text").toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFail(String message) {
+                resultTextView.setText("");
+
+            }
+        });
+    }
 }

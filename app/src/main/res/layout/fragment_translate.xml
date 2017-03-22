@@ -27,6 +27,7 @@
             android:imeOptions="actionDone"
             android:scrollHorizontally="false"
             android:id="@+id/input_text"
+            android:textCursorDrawable="@drawable/custom_cursor_drawable"
             android:layout_marginBottom="8dp"
             android:inputType="text|textMultiLine">
         </EditText>
