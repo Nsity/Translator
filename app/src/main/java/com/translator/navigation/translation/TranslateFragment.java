@@ -1,10 +1,13 @@
 package com.translator.navigation.translation;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -29,15 +32,20 @@ import android.widget.Toast;
 import com.translator.R;
 import com.translator.navigation.Translation;
 import com.translator.navigation.TranslationManager;
+import com.translator.system.CommonFunctions;
+import com.translator.system.ConnectionDialog;
 import com.translator.system.Language;
 import com.translator.system.Preferences;
+import com.translator.system.Snackbar;
 import com.translator.system.database.HistoryDBInterface;
 import com.translator.system.network.CallBack;
+import com.translator.system.network.Server;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.security.spec.ECField;
+import java.util.ArrayList;
 
 /**
  * Created by nsity on 18.03.17.
@@ -53,12 +61,13 @@ public class TranslateFragment extends Fragment {
     private ImageButton switchImageButton;
 
     public static final int LANG_REQUEST_CODE = 2;
+    private View rootView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_translate, container, false);
+        rootView = inflater.inflate(R.layout.fragment_translate, container, false);
 
         LinearLayout touchInterceptor = (LinearLayout) rootView.findViewById(R.id.touch_interceptor);
         touchInterceptor.setOnTouchListener(new View.OnTouchListener() {
@@ -143,12 +152,12 @@ public class TranslateFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 // Прописываем то, что надо выполнить после изменения текста
-
+                Log.i("TAG", inputEditText.getText().toString());
                 String inputText = inputEditText.getText().toString();
-
 
                 if(inputText.equals("")) {
                     resultTextView.setText("");
+                    Server.getHttpClient().cancelRequests(getActivity(), true);
                 }
 
                 if(!inputText.equals("")) {
@@ -266,25 +275,56 @@ public class TranslateFragment extends Fragment {
     }
 
 
+    /**
+     * Метод для перевода текста
+     * @param inputText - текст, который необходимо перевести
+     */
+    private void translateText(final String inputText) {
+        //направление перевода
+        String langPair = Preferences.get(Preferences.input_lang, getActivity()) + "-" +
+                Preferences.get(Preferences.translation_lang, getActivity());
 
-    private void translateText(String inputText) {
-        String langPair = Preferences.get(Preferences.input_lang, getActivity()) + "-" + Preferences.get(Preferences.translation_lang, getActivity());
-        TranslationManager.translate(getActivity(), inputText, langPair, new CallBack<JSONObject>() {
+        //нет соединения с Интернетом
+        if(!Server.isOnline(getActivity())) {
+            ConnectionDialog.showNoConnectionDialog(getActivity());
+            return;
+        }
+
+        TranslationManager.translate(getActivity(), inputText, langPair, new CallBack<ArrayList<String>>() {
             @Override
-            public void onSuccess(JSONObject result) {
-
-                try {
-                    resultTextView.setText(result.getJSONArray("text").toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            public void onSuccess(ArrayList<String> result) {
+                //если поле ввода пустое, то очищаем результат
+                if(CommonFunctions.StringIsNullOrEmpty(inputEditText.getText().toString())) {
+                    resultTextView.setText("");
+                    return;
                 }
+                //записываем результат
+                resultTextView.setText(listToStr(result));
             }
 
             @Override
             public void onFail(String message) {
+                //очищаем поле перевода
                 resultTextView.setText("");
 
+                //показываем ошибку
+                Snackbar.showLongMessage(getActivity(), rootView, message, Snackbar.SNACKBAR_FAIL);
             }
         });
+    }
+
+
+    /**
+     * Переводит список переводов в строку
+     * @param arr - список переводов
+     * @return - строка
+     */
+    private String listToStr(ArrayList<String> arr) {
+        String resStr = "";
+        for (String str: arr) {
+            resStr += str + "\n";
+        }
+
+        return resStr;
     }
 }

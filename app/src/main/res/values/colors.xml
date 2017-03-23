@@ -11,4 +11,64 @@
     <color name="colorGray5">#BDBDBD</color>
     <color name="colorGray6">#9E9E9E</color>
     <color name="colorGray7">#757575</color>
+
+
+
+
+
+    <color name="blue_color_1">#E3F2FD</color>
+    <color name="blue_color_2">#BBDEFB</color>
+    <color name="blue_color_3">#90CAF9</color>
+    <color name="blue_color_4">#64B5F6</color>
+    <color name="blue_color_5">#42A5F5</color>
+    <color name="blue_color_6">#2196F3</color>
+    <color name="blue_color_7">#1E88E5</color>
+    <color name="blue_color_8">#1976D2</color>
+    <color name="blue_color_9">#1565C0</color>
+    <color name="blue_color_10">#0D47A1</color>
+
+    <color name="green_color_1">#E8F5E9</color>
+    <color name="green_color_2">#C8E6C9</color>
+    <color name="green_color_3">#A5D6A7</color>
+    <color name="green_color_4">#81C784</color>
+    <color name="green_color_5">#66BB6A</color>
+    <color name="green_color_6">#4CAF50</color>
+    <color name="green_color_7">#43A047</color>
+    <color name="green_color_8">#388E3C</color>
+    <color name="green_color_9">#2E7D32</color>
+    <color name="green_color_10">#1B5E20</color>
+
+    <color name="orange_color_1">#FFF3E0</color>
+    <color name="orange_color_2">#FFE0B2</color>
+    <color name="orange_color_3">#FFCC80</color>
+    <color name="orange_color_4">#FFB74D</color>
+    <color name="orange_color_5">#FFA726</color>
+    <color name="orange_color_6">#FF9800</color>
+    <color name="orange_color_7">#FB8C00</color>
+    <color name="orange_color_8">#F57C00</color>
+    <color name="orange_color_9">#EF6C00</color>
+    <color name="orange_color_10">#E65100</color>
+
+
+    <color name="red_color_1">#FFEBEE</color>
+    <color name="red_color_2">#FFCDD2</color>
+    <color name="red_color_3">#EF9A9A</color>
+    <color name="red_color_4">#E57373</color>
+    <color name="red_color_5">#EF5350</color>
+    <color name="red_color_6">#F44336</color>
+    <color name="red_color_7">#E53935</color>
+    <color name="red_color_8">#D32F2F</color>
+    <color name="red_color_9">#C62828</color>
+    <color name="red_color_10">#B71C1C</color>
+
+    <color name="grey_color_1">#FAFAFA</color>
+    <color name="grey_color_2">#F5F5F5</color>
+    <color name="grey_color_3">#EEEEEE</color>
+    <color name="grey_color_4">#E0E0E0</color>
+    <color name="grey_color_5">#E0E0E0</color>
+    <color name="grey_color_6">#BDBDBD</color>
+    <color name="grey_color_7">#9E9E9E</color>
+    <color name="grey_color_8">#757575</color>
+    <color name="grey_color_9">#757575</color>
+    <color name="grey_color_10">#424242</color>
 </resources>

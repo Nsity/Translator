@@ -1,6 +1,8 @@
 package com.translator.navigation;
 
+import android.graphics.Rect;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -37,11 +40,17 @@ public class MainActivity extends AppCompatActivity {
 
     int selectedPosition = 0;
 
+    private CoordinatorLayout rootView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        rootView = (CoordinatorLayout) findViewById(R.id.root_view);
+
+        checkKeyBoardUp();
 
         Language.setUpLanguages();
 
@@ -75,12 +84,10 @@ public class MainActivity extends AppCompatActivity {
         favoritesFragment = new FavoritesFragment();
         settingsFragment = new SettingsFragment();
 
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 
-        final FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.main_container, translateFragment).commit();
-
-        bottomNavigationView = (BottomNavigationView)
-                findViewById(R.id.bottom_navigation);
+        displayView(R.id.action_translate);
+        updateNavigationBarState(R.id.action_translate);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -147,6 +154,29 @@ public class MainActivity extends AppCompatActivity {
                 translateLayout.setVisibility(View.GONE);
                 break;*/
         }
+    }
+
+    /**
+     * Метод, который скрывает bottomNavigationView, когда на экране есть клавиатура
+     */
+    public void checkKeyBoardUp(){
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect r = new Rect();
+                rootView.getWindowVisibleDisplayFrame(r);
+                int heightDiff = rootView.getRootView().getHeight() - (r.bottom - r.top);
+
+                if (heightDiff > 100) { // if more than 100 pixels, its probably a keyboard...
+                    //ok now we know the keyboard is up...
+                    bottomNavigationView.setVisibility(View.GONE);
+
+                }else{
+                    //ok now we know the keyboard is down...
+                    bottomNavigationView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
 

@@ -16,6 +16,7 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.conn.ConnectTimeoutException;
 
 /**
  * Created by nsity on 18.03.17.
@@ -29,9 +30,10 @@ public class AsyncHttpResponse {
     public static final int CALL_POST_JSON_HTTP_RESPONSE = 1;
     public static final int CALL_SYNCHRONIZATION_RESPONSE = 2;
 
-    private static final String EXCEPTION_TAG = "Exception";
-    private static final String MESSAGE_TAG = "Message";
+    private static final String CODE_TAG = "code";
+    private static final String MESSAGE_TAG = "message";
     public static final String MESSAGE = "timeout";
+
 
     public AsyncHttpResponse(Context context, String url, RequestParams params, int callMethod, CallBack<ResponseObject> callBack){
         this.callBack = callBack;
@@ -86,7 +88,7 @@ public class AsyncHttpResponse {
                     try {
                         JSONObject exception = new JSONObject();
                         exception.put(MESSAGE_TAG, MESSAGE);
-                        error.put(EXCEPTION_TAG, exception);
+                        error.put(CODE_TAG, statusCode);
                     } catch (JSONException ignored) {
                     }
                     errorResponse = error;
@@ -119,12 +121,6 @@ public class AsyncHttpResponse {
             }
 
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                response = (response == null) ? new JSONArray() : response;
-                callBack.onSuccess(new ResponseObject(statusCode, headers, response));
-            }
-
-            @Override
             public void onSuccess(int statusCode, Header[] headers, String response) {
                 response = (CommonFunctions.StringIsNullOrEmpty(response)) ? "" : response;
                 callBack.onSuccess(new ResponseObject(statusCode, headers, response));
@@ -134,22 +130,18 @@ public class AsyncHttpResponse {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 errorResponse = (errorResponse == null) ? new JSONObject() : errorResponse;
 
-                if (throwable instanceof SocketTimeoutException) {
+                if (throwable instanceof SocketTimeoutException || throwable instanceof ConnectTimeoutException) {
                     JSONObject error = new JSONObject();
                     try {
                         JSONObject exception = new JSONObject();
                         exception.put(MESSAGE_TAG, MESSAGE);
-                        error.put(EXCEPTION_TAG, exception);
-                    } catch (JSONException ignored) {}
+                        error.put(CODE_TAG, statusCode);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     errorResponse = error;
                 }
 
-                callBack.onFailure(new ResponseObject(statusCode, headers, throwable, errorResponse));
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                errorResponse = (errorResponse == null) ? new JSONArray() : errorResponse;
                 callBack.onFailure(new ResponseObject(statusCode, headers, throwable, errorResponse));
             }
 

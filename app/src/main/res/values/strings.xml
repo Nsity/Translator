@@ -34,4 +34,13 @@
     <string name="translate_with_yandex">Переведено сервисом «Яндекс.Переводчик»</string>
     <string name="yandex">Яндекс</string>
     <string name="par_hint">hint</string>
+    <string name="ok">ОК</string>
+    <string name="no_connection">Отсутствует соединение с Интернетом. Проверьте подключение и повторите попытку снова</string>
+    <string name="no_connection_title">Нет соединения</string>
+    <string name="par_code">code</string>
+    <string name="error_occurred">Произошла ошибка</string>
+    <string name="error_tracker_empty_json">Пустой JSON-ответ</string>
+    <string name="error">Ошибка</string>
+    <string name="par_message">message</string>
+    <string name="error_tracker_timeout_error">Превышено время ожидания ответа. Повторите действие позже</string>
 </resources>

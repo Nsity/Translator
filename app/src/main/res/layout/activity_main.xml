@@ -9,6 +9,7 @@
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     android:selectAllOnFocus="false"
+    android:id="@+id/root_view"
     tools:context=".navigation.MainActivity">
 
     <android.support.design.widget.AppBarLayout
