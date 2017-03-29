@@ -44,4 +44,6 @@
     <string name="error">Ошибка</string>
     <string name="par_message">message</string>
     <string name="error_tracker_timeout_error">Превышено время ожидания ответа. Повторите действие позже</string>
+    <string name="no_translations_in_favorites">Нет переводов в избранном</string>
+    <string name="no_translations_in_history">Нет переводов в истории</string>
 </resources>

@@ -52,9 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
         checkKeyBoardUp();
 
-        Language.setUpLanguages();
-
-
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -125,22 +122,22 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.action_translate:
+                getSupportActionBar().setDisplayShowTitleEnabled(false);
                 toolbar.setTitle(getString(R.string.text_translator));
                 toolbar.setTitleMarginStart(0);
-                getSupportActionBar().setDisplayShowTitleEnabled(false);
                 translateLayout.setVisibility(View.VISIBLE);
                 break;
             case R.id.action_history:
+                translateLayout.setVisibility(View.GONE);
+                getSupportActionBar().setDisplayShowTitleEnabled(true);
                 toolbar.setTitle(getString(R.string.text_history));
                 toolbar.setTitleMarginStart(36);
-                getSupportActionBar().setDisplayShowTitleEnabled(true);
-                translateLayout.setVisibility(View.GONE);
                 break;
             case R.id.action_favorites:
+                translateLayout.setVisibility(View.GONE);
+                getSupportActionBar().setDisplayShowTitleEnabled(true);
                 toolbar.setTitle(getString(R.string.text_favorites));
                 toolbar.setTitleMarginStart(36);
-                getSupportActionBar().setDisplayShowTitleEnabled(true);
-                translateLayout.setVisibility(View.GONE);
                 break;
             /*case R.id.action_settings:
                 toolbar.setTitle(getString(R.string.text_settings));

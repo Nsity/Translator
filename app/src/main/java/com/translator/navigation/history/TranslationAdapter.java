@@ -16,6 +16,7 @@ import com.translator.navigation.Translation;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by nsity on 20.03.17.
@@ -78,7 +79,8 @@ public class TranslationAdapter extends BaseAdapter {
 
         holder.inputTextView.setText(translation.getInputText());
         holder.translationTextView.setText(translation.getTranslationText());
-        holder.languagesTextView.setText(translation.getInputLang() + " - " + translation.getTranslationLang());
+        holder.languagesTextView.setText(translation.getInputLang().toUpperCase(Locale.ENGLISH) +
+                " - " + translation.getTranslationLang().toUpperCase(Locale.ENGLISH));
 
         setIsFavoriteBackground(holder.isFavoriteImageButton, translation.isFavorite());
 
@@ -87,6 +89,7 @@ public class TranslationAdapter extends BaseAdapter {
             public void onClick(View view) {
                 translation.setFavorite(!translation.isFavorite());
                 setIsFavoriteBackground(holder.isFavoriteImageButton, translation.isFavorite());
+                translation.update();
             }
         });
 

@@ -13,6 +13,8 @@
     <ListView
         android:layout_width="match_parent"
         android:id="@+id/languages_list_view"
+        android:choiceMode="singleChoice"
+        android:listSelector="@color/listSelector"
         android:layout_height="match_parent">
     </ListView>
 

@@ -16,13 +16,14 @@ public class Languages {
 
 
     private LanguageDBInterface db;
+    private Context context;
 
     private ArrayList<Language> arrayList;
 
     public Languages(Context context) {
         this.db = new LanguageDBInterface(context);
         this.arrayList = new ArrayList<>();
-
+        this.context = context;
         loadFromDB();
     }
 
@@ -34,7 +35,7 @@ public class Languages {
 
         arrayList.clear();
         if (cursor.moveToFirst()){
-            do{
+            do {
                 String langName = cursor.getString(cursor.getColumnIndex(LanguageDBInterface.LANGUAGE_COLUMN_NAME));
                 String langFullName = cursor.getString(cursor.getColumnIndex(LanguageDBInterface.LANGUAGE_COLUMN_FULL_NAME));
 
@@ -43,7 +44,7 @@ public class Languages {
                 language.setFullName(langFullName);
 
                 arrayList.add(language);
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
 
         cursor.close();
@@ -53,6 +54,16 @@ public class Languages {
 
     public ArrayList<Language> getLanguages() {
         return arrayList;
+    }
+
+    public String findFullName(String lang) {
+        for (Language language: arrayList) {
+            if(language.getName().equals(lang)) {
+                return language.getFullName();
+            }
+        }
+
+        return "";
     }
 
 }

@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
 import com.translator.R;
+import com.translator.navigation.translation.Languages;
 import com.translator.system.CommonFunctions;
 import com.translator.system.Preferences;
 import com.translator.system.network.CallBack;
@@ -25,6 +26,9 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+
+        Preferences.set(Preferences.ui_lang, Locale.getDefault().getLanguage(), getApplicationContext());
+
         //установка default input lang
         if(CommonFunctions.StringIsNullOrEmpty(Preferences.get(Preferences.input_lang, getApplicationContext()))) {
             Preferences.set(Preferences.input_lang, Locale.getDefault().getLanguage(), getApplicationContext());
@@ -36,8 +40,10 @@ public class SplashActivity extends AppCompatActivity {
         }
 
 
-        //если нет Интернета, то просто загружаем главную
-        if(!Server.isOnline(getApplicationContext())) {
+
+        //TODO
+        //если нет Интернета или уже загружены языки, то просто загружаем главную
+        if(!Server.isOnline(getApplicationContext()) || new Languages(getApplicationContext()).getLanguages().size() != 0) {
             showSplash();
             return;
         }
@@ -70,7 +76,7 @@ public class SplashActivity extends AppCompatActivity {
 
 
     private void loadLanguages() {
-        TranslationManager.getLanguages(getApplicationContext(), Preferences.get(Preferences.input_lang, getApplicationContext()), new CallBack() {
+        TranslationManager.getLanguages(getApplicationContext(), Locale.getDefault().getLanguage(), new CallBack() {
             @Override
             public void onSuccess() {
                 showSplash();

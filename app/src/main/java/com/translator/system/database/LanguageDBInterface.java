@@ -73,9 +73,10 @@ public class LanguageDBInterface extends ADBWorker {
     }
 
     public Cursor getLanguages() {
-        String selectQuery = "SELECT * FROM " + LANGUAGE_TABLE_NAME;
+        String selectQuery = "SELECT * FROM " + LANGUAGE_TABLE_NAME + " ORDER BY " + LANGUAGE_COLUMN_FULL_NAME;
         return getCursor(selectQuery, new String[]{ });
     }
+
 
 
 }

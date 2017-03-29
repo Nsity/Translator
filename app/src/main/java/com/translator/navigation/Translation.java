@@ -1,5 +1,10 @@
 package com.translator.navigation;
 
+import android.content.ContentValues;
+import android.content.Context;
+
+import com.translator.system.database.TranslationDBInterface;
+
 /**
  * Created by nsity on 20.03.17.
  */
@@ -13,14 +18,15 @@ public class Translation {
     private String inputLang;
     private String translationLang;
     private String fullTranslation;
+    private boolean inHistory;
 
 
-    public Translation(int id) {
-        this.id = id;
-    }
+    private TranslationDBInterface db;
+    private Context context;
 
-    public Translation() {
-
+    public Translation(Context context) {
+        this.context = context;
+        this.db = new TranslationDBInterface(context);
     }
 
     public int getId() {
@@ -77,5 +83,23 @@ public class Translation {
 
     public void setFullTranslation(String fullTranslation) {
         this.fullTranslation = fullTranslation;
+    }
+
+    public boolean isInHistory() {
+        return inHistory;
+    }
+
+    public void setInHistory(boolean inHistory) {
+        this.inHistory = inHistory;
+    }
+
+
+    public long save() {
+        return db.saveTranslation(this);
+    }
+
+
+    public long update() {
+        return db.updateTranslation(this);
     }
 }

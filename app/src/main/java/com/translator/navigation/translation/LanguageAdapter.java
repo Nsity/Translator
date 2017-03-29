@@ -1,17 +1,20 @@
 package com.translator.navigation.translation;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.translator.R;
 import com.translator.system.Language;
 
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 /**
  * Created by nsity on 22.03.17.
@@ -22,16 +25,20 @@ public class LanguageAdapter extends BaseAdapter {
     private ArrayList<Language> arrayList;
     private Context context;
     private LayoutInflater layoutInflater;
+    private String selectedLang;
 
-    public LanguageAdapter(Context context, ArrayList<Language> arrayList) {
+    public LanguageAdapter(Context context, ArrayList<Language> arrayList, String selectedLang) {
         this.arrayList = arrayList;
         this.layoutInflater = LayoutInflater.from(context);
         this.context = context;
+        this.selectedLang = selectedLang;
     }
 
     public static class ViewHolder {
         TextView langTextView;
         ImageButton isCheckedImageButton;
+        RelativeLayout relativeLayout;
+
     }
 
     @Override
@@ -61,6 +68,7 @@ public class LanguageAdapter extends BaseAdapter {
 
             holder.langTextView = (TextView) customView.findViewById(R.id.lang_text);
             holder.isCheckedImageButton = (ImageButton) customView.findViewById(R.id.is_checked);
+            holder.relativeLayout = (RelativeLayout) customView.findViewById(R.id.relative_layout);
 
             customView.setTag(holder);
         } else {
@@ -70,6 +78,19 @@ public class LanguageAdapter extends BaseAdapter {
 
         holder.langTextView.setText(language.getFullName());
 
+        if(language.getName().equals(selectedLang)) {
+            holder.isCheckedImageButton.setVisibility(View.VISIBLE);
+            holder.relativeLayout.setBackgroundColor(context.getResources().getColor(R.color.grey_color_3));
+        }else {
+            holder.isCheckedImageButton.setVisibility(View.GONE);
+            holder.relativeLayout.setBackgroundColor(Color.TRANSPARENT);
+        }
+
         return customView;
+    }
+
+    public void update(String selectedLang) {
+        this.selectedLang = selectedLang;
+        notifyDataSetChanged();
     }
 }

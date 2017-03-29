@@ -11,9 +11,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.translator.R;
+import com.translator.navigation.Translation;
+import com.translator.navigation.history.History;
+import com.translator.navigation.history.TranslationAdapter;
+
+import java.util.ArrayList;
 
 /**
  * Created by nsity on 18.03.17.
@@ -23,6 +30,12 @@ public class FavoritesFragment extends Fragment {
 
     private ListView favoritesListView;
 
+    private RelativeLayout translationsLayout;
+    private LinearLayout noTranslationsLayout;
+
+    private Favorite favorite;
+    private ArrayList<Translation> arrayList;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -31,8 +44,23 @@ public class FavoritesFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
         favoritesListView = (ListView) rootView.findViewById(R.id.favorites_list_view);
 
+        translationsLayout = (RelativeLayout) rootView.findViewById(R.id.translations_layout);
+        noTranslationsLayout = (LinearLayout) rootView.findViewById(R.id.no_translations_layout);
 
         setHasOptionsMenu(true);
+
+        favorite = new Favorite(getActivity());
+        arrayList = favorite.getTranslations();
+        if(arrayList.size() != 0) {
+            translationsLayout.setVisibility(View.VISIBLE);
+            noTranslationsLayout.setVisibility(View.GONE);
+        } else {
+            translationsLayout.setVisibility(View.GONE);
+            noTranslationsLayout.setVisibility(View.VISIBLE);
+        }
+
+        TranslationAdapter adapter = new TranslationAdapter(getActivity(), arrayList);
+        favoritesListView.setAdapter(adapter);
 
 
 

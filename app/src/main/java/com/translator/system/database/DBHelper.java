@@ -25,11 +25,14 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase database) {
         database.execSQL(LanguageDBInterface.LANGUAGE_TABLE_CREATE);
+        database.execSQL(TranslationDBInterface.TRANSLATION_TABLE_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + LanguageDBInterface.LANGUAGE_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TranslationDBInterface.TRANSLATION_TABLE_NAME);
+
 
         onCreate(db);
     }

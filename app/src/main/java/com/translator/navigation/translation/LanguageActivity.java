@@ -5,11 +5,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.translator.R;
 import com.translator.system.Language;
+import com.translator.system.Preferences;
 
 import java.util.ArrayList;
 
@@ -38,25 +41,64 @@ public class LanguageActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Intent intent = getIntent();
-        if(intent == null) {
-            finish();
-            return;
-        }
-
         if(getSupportActionBar() != null) {
             setTitle();
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         }
 
+        setAdapter();
+    }
 
+
+    private void setAdapter() {
+        final Intent intent = getIntent();
+        if(intent == null) {
+            return;
+        }
+
+        //выбираем язык, который нужно отметить в списке
+        String selectedLang = Preferences.get(Preferences.input_lang, getApplicationContext());
+
+        switch (intent.getIntExtra(ACTION, 0)) {
+            case INPUT_LANG:
+                selectedLang = Preferences.get(Preferences.input_lang, getApplicationContext());
+                break;
+            case TRANSLATION_LANG:
+                selectedLang = Preferences.get(Preferences.translation_lang, getApplicationContext());
+                break;
+        }
+
+        //получаем все языки
         Languages languages = new Languages(getApplicationContext());
         arrayList = languages.getLanguages();
 
-        LanguageAdapter languagesAdapter = new LanguageAdapter(getApplicationContext(), arrayList);
+        //создаем адаптер и устанавливаем его
+        final LanguageAdapter languagesAdapter = new LanguageAdapter(getApplicationContext(), arrayList, selectedLang);
         languagesListView.setAdapter(languagesAdapter);
 
+        //выбор языка
+        languagesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                switch (intent.getIntExtra(ACTION, 0)) {
+                    case INPUT_LANG:
+                        Preferences.set(Preferences.input_lang, arrayList.get(i).getName(), getApplicationContext());
+                        languagesAdapter.update(arrayList.get(i).getName());
+
+                        setResult(RESULT_OK, intent);
+                        onBackPressed();
+                        break;
+                    case TRANSLATION_LANG:
+                        Preferences.set(Preferences.translation_lang, arrayList.get(i).getName(), getApplicationContext());
+                        languagesAdapter.update(arrayList.get(i).getName());
+
+                        setResult(RESULT_OK, intent);
+                        onBackPressed();
+                        break;
+                }
+            }
+        });
     }
 
 
@@ -90,5 +132,11 @@ public class LanguageActivity extends AppCompatActivity {
     public void onBackPressed() {
         finish();
         overridePendingTransition(R.anim.hold, R.anim.push_out_to_bottom);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setAdapter();
     }
 }

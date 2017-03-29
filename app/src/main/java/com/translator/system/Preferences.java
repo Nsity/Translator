@@ -13,6 +13,7 @@ public class Preferences {
     public static final String input_lang = "input_lang";
     public static final String translation_lang = "translation_lang";
     private static final String accountType = "com.translator";
+    public static final String ui_lang = "ui_lang";
 
 
     private static SharedPreferences sPref;

@@ -239,7 +239,8 @@ public abstract class ADBWorker {
         DBHelper dbHelper = new DBHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-         db.delete(LanguageDBInterface.LANGUAGE_TABLE_NAME, null, null);
+        db.delete(LanguageDBInterface.LANGUAGE_TABLE_NAME, null, null);
+        db.delete(TranslationDBInterface.TRANSLATION_TABLE_NAME, null, null);
 
         db.close();
     }
