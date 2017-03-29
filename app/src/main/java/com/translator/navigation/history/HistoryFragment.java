@@ -15,7 +15,6 @@ import android.widget.ListView;
 
 import com.translator.R;
 import com.translator.navigation.Translation;
-import com.translator.navigation.TranslationAdapter;
 
 import java.util.ArrayList;
 

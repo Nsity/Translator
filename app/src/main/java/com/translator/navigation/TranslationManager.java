@@ -6,6 +6,7 @@ import android.util.Log;
 import com.loopj.android.http.RequestParams;
 import com.translator.R;
 import com.translator.system.CommonFunctions;
+import com.translator.system.database.LanguageDBInterface;
 import com.translator.system.network.AsyncHttpResponse;
 import com.translator.system.network.CallBack;
 import com.translator.system.network.ErrorTracker;
@@ -131,7 +132,7 @@ public class TranslationManager {
         });
     }
 
-    public static void getLanguages(final Context context, String lang, final CallBack callBack) {
+    public static void getLanguages(final Context context, final String lang, final CallBack callBack) {
         String method = context.getResources().getString(R.string.api_get_langs);
 
         RequestParams params = new RequestParams();
@@ -147,11 +148,24 @@ public class TranslationManager {
             @Override
             public void onSuccess(ResponseObject object) {
                 if (!(object.getResponse() instanceof JSONObject)) {
+                    callBack.onFail(context.getString(R.string.error_occurred));
                     return;
                 }
 
                 JSONObject response = (JSONObject) object.getResponse();
-                callBack.onSuccess(response);
+
+                try {
+                    JSONObject result = response.getJSONObject(context.getString(R.string.par_langs));
+
+                    LanguageDBInterface db = new LanguageDBInterface(context);
+                    db.save(result, true);
+
+                    callBack.onSuccess();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    callBack.onFail(context.getString(R.string.error_occurred));
+                }
             }
 
             @Override

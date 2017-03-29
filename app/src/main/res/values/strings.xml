@@ -26,6 +26,7 @@
     <string name="par_key">key</string>
     <string name="par_text">text</string>
     <string name="par_lang">lang</string>
+    <string name="par_langs">langs</string>
     <string name="par_format">format</string>
     <string name="par_options">options</string>
     <string name="language_text">Язык текста</string>

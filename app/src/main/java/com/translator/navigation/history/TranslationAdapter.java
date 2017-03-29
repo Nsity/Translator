@@ -1,4 +1,4 @@
-package com.translator.navigation;
+package com.translator.navigation.history;
 
 import android.content.Context;
 import android.media.Image;
@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.translator.R;
+import com.translator.navigation.Translation;
 
 import org.w3c.dom.Text;
 

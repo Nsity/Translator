@@ -8,6 +8,10 @@ import java.util.HashMap;
 
 public class Language {
 
+    private String name;
+    private String fullName;
+
+
    private static HashMap<String, String> hashMap = new HashMap<>();
 
 
@@ -111,5 +115,21 @@ public class Language {
         hashMap.put("eo","эсперанто");
         hashMap.put("jv","яванский");
         hashMap.put("ja","японский");
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 }

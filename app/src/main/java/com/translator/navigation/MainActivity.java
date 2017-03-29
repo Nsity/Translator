@@ -54,13 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         Language.setUpLanguages();
 
-        if(CommonFunctions.StringIsNullOrEmpty(Preferences.get(Preferences.input_lang, getApplicationContext()))) {
-            Preferences.set(Preferences.input_lang, Locale.getDefault().getLanguage(), getApplicationContext());
-        }
 
-        if(CommonFunctions.StringIsNullOrEmpty(Preferences.get(Preferences.translation_lang, getApplicationContext()))) {
-            Preferences.set(Preferences.translation_lang, "en", getApplicationContext());
-        }
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
