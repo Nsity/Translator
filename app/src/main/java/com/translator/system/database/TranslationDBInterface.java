@@ -89,6 +89,14 @@ public class TranslationDBInterface extends ADBWorker {
     }
 
 
+    public Cursor searchInFavorite(String query) {
+        String selectQuery = "SELECT * FROM " + TRANSLATION_TABLE_NAME + " WHERE " + TRANSLATION_COLUMN_IN_FAVORITE + " =? AND" +
+                " ( " + TRANSLATION_COLUMN_TRANSLATION_TEXT + " LIKE '%" + query + "%' OR " +
+                TRANSLATION_COLUMN_INPUT_TEXT + " LIKE '%" + query + "%') " +
+                " ORDER BY " + TRANSLATION_COLUMN_ID + " DESC";
+        return getCursor(selectQuery, new String[]{ "1" });
+    }
+
     public Cursor getFavorite() {
         String selectQuery = "SELECT * FROM " + TRANSLATION_TABLE_NAME + " WHERE " + TRANSLATION_COLUMN_IN_FAVORITE + " =? ORDER BY " + TRANSLATION_COLUMN_ID + " DESC";
         return getCursor(selectQuery, new String[]{ "1" });

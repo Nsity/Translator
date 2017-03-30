@@ -1,27 +1,40 @@
 package com.translator.navigation.history;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
+import android.graphics.Rect;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.translator.R;
 import com.translator.navigation.Translation;
@@ -37,61 +50,53 @@ import java.util.ArrayList;
 
 public class HistoryFragment extends Fragment {
 
-    private ListView historyListView;
     private LinearLayout noTranslationsLayout;
-
     private ArrayList<Translation> arrayList;
     private History history;
     private TranslationAdapter adapter;
     private TextView noTranslationsTextView;
     private EditText searchEditText;
+    private ImageButton clearButton;
+
+    private  CustomTextWatcher obj;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
 
         View rootView = inflater.inflate(R.layout.fragment_history, container, false);
-        historyListView = (ListView) rootView.findViewById(R.id.history_list_view);
-
+        ListView historyListView = (ListView) rootView.findViewById(R.id.history_list_view);
         noTranslationsLayout = (LinearLayout) rootView.findViewById(R.id.no_translations_layout);
         searchEditText = (EditText) rootView.findViewById(R.id.search_edit_text);
         noTranslationsTextView = (TextView) rootView.findViewById(R.id.no_translations_text);
+        clearButton = (ImageButton) rootView.findViewById(R.id.clear_button);
 
         setHasOptionsMenu(true);
+
+        //-----------------------//
+
+        obj = new CustomTextWatcher();
+        searchEditText.addTextChangedListener(obj);
 
 
         history = new History(getActivity());
 
         arrayList = new ArrayList<>();
         adapter = new TranslationAdapter(getActivity(), arrayList);
-
-
         historyListView.setAdapter(adapter);
+
 
         updateView(false);
 
-
-
-        searchEditText.addTextChangedListener(new TextWatcher() {
+        clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String searchQuery = searchEditText.getText().toString();
-                history.search(searchQuery);
-                updateView(true);
-
+            public void onClick(View view) {
+                searchEditText.setText("");
+                clearButton.setVisibility(View.GONE);
             }
         });
+
+
 
 
         historyListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -129,6 +134,58 @@ public class HistoryFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        if(!hidden) {
+
+            if(CommonFunctions.StringIsNullOrEmpty(searchEditText.getText().toString())) {
+                updateView(false);
+            } else {
+                search();
+            }
+
+        }
+
+    }
+
+    private class CustomTextWatcher implements TextWatcher {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            if(CommonFunctions.StringIsNullOrEmpty(searchEditText.getText().toString())) {
+                clearButton.setVisibility(View.GONE);
+            } else {
+                clearButton.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            search();
+        }
+    }
+
+
+    private void search() {
+        String searchQuery = searchEditText.getText().toString();
+        history.search(searchQuery);
+        updateView(true);
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        searchEditText.removeTextChangedListener(obj);
+
+    }
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -154,6 +211,7 @@ public class HistoryFragment extends Fragment {
         if(isSearch) {
             noTranslationsTextView.setText(getString(R.string.not_found));
         } else {
+            history.loadFromDB();
             noTranslationsTextView.setText(getString(R.string.no_translations_in_history));
         }
 
@@ -178,6 +236,15 @@ public class HistoryFragment extends Fragment {
 
 
     private void deleteAll() {
+        try {
+            searchEditText.clearFocus();
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setTitle(getString(R.string.text_history))
                 .setMessage(R.string.delete_all_message_in_history)

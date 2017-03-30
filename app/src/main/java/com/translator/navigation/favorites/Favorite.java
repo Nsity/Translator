@@ -5,6 +5,7 @@ import android.database.Cursor;
 
 import com.translator.navigation.Translation;
 import com.translator.navigation.Translations;
+import com.translator.system.CommonFunctions;
 
 /**
  * Created by nsity on 29.03.17.
@@ -38,6 +39,12 @@ public class Favorite extends Translations {
 
     @Override
     protected void search(String query) {
-
+        Cursor cursor;
+        if(CommonFunctions.StringIsNullOrEmpty(query)) {
+            cursor = db.getFavorite();
+        } else {
+            cursor = db.searchInFavorite(query);
+        }
+        setTranslations(cursor);
     }
 }

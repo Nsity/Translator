@@ -17,6 +17,31 @@ tools:showIn="@layout/activity_main">
         android:layout_alignParentTop="true">
     </FrameLayout>
 
+    <fragment
+        android:id="@+id/firstFragment"
+        android:name="com.translator.navigation.translation.TranslateFragment"
+        android:layout_width="match_parent"
+        android:layout_above="@+id/bottom_navigation"
+        android:layout_alignParentTop="true"
+        android:layout_height="match_parent" />
+
+    <fragment
+        android:id="@+id/secondFragment"
+        android:name="com.translator.navigation.history.HistoryFragment"
+        android:layout_width="match_parent"
+        android:layout_above="@+id/bottom_navigation"
+        android:layout_alignParentTop="true"
+        android:layout_height="match_parent" />
+
+    <fragment
+        android:id="@+id/thirdFragment"
+        android:name="com.translator.navigation.favorites.FavoritesFragment"
+        android:layout_width="match_parent"
+        android:layout_above="@+id/bottom_navigation"
+        android:layout_alignParentTop="true"
+        android:layout_height="match_parent" />
+
+
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"

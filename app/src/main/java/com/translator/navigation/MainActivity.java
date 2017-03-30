@@ -42,10 +42,32 @@ public class MainActivity extends AppCompatActivity {
 
     private CoordinatorLayout rootView;
 
+
+    private final static int TRANSLATE_ITEM = 0;
+    private final static int HISTORY_ITEM = 1;
+    private final static int FAVORITES_ITEM = 2;
+
+    private Fragment[] fragments = new Fragment[FAVORITES_ITEM + 1];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        FragmentManager fm = getSupportFragmentManager();
+        fragments[TRANSLATE_ITEM] = fm.findFragmentById(R.id.firstFragment);
+        fragments[HISTORY_ITEM] = fm.findFragmentById(R.id.secondFragment);
+        fragments[FAVORITES_ITEM] = fm.findFragmentById(R.id.thirdFragment);
+
+        FragmentTransaction transaction = fm.beginTransaction();
+        for (Fragment fragment : fragments) {
+            transaction.hide(fragment);
+        }
+        transaction.commit();
 
 
         rootView = (CoordinatorLayout) findViewById(R.id.root_view);
@@ -53,8 +75,6 @@ public class MainActivity extends AppCompatActivity {
         checkKeyBoardUp();
 
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         translateLayout = (RelativeLayout) findViewById(R.id.translate_layout);
 
@@ -69,11 +89,13 @@ public class MainActivity extends AppCompatActivity {
         });*/
 
 
-        fragmentManager = getSupportFragmentManager();
+
+
+     /*   fragmentManager = getSupportFragmentManager();
         translateFragment = new TranslateFragment();
         historyFragment = new HistoryFragment();
         favoritesFragment = new FavoritesFragment();
-        settingsFragment = new SettingsFragment();
+        settingsFragment = new SettingsFragment();*/
 
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 
@@ -91,34 +113,89 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+
+    private int getPosition(int itemId) {
+        switch (itemId) {
+            case R.id.action_translate:
+                return TRANSLATE_ITEM;
+            case R.id.action_history:
+                return HISTORY_ITEM;
+            case R.id.action_favorites:
+                return FAVORITES_ITEM;
+        }
+        return 0;
+    }
+
+
     private void displayView(int itemId) {
         setUpToolbar(itemId);
 
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+
+        int position = getPosition(itemId);
+
+        //http://stackoverflow.com/questions/4932462/animate-the-transition-between-fragments
+        if(selectedPosition != position) {
+            if(selectedPosition < position) {
+                //right
+                transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left,
+                        R.anim.enter_from_left, R.anim.exit_to_right);
+            } else {
+                //left
+                transaction.setCustomAnimations(R.anim.enter_from_left,
+                        R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_left);
+            }
+        }
+
+        selectedPosition = position;
+
+        for (int i = 0; i < fragments.length; i++) {
+            if (i == selectedPosition) {
+                transaction.show(fragments[i]);
+            } else {
+                transaction.hide(fragments[i]);
+            }
+        }
+
+        transaction.commit();
+    }
+
+   /* private void displayView(int itemId) {
+        setUpToolbar(itemId);
 
         final FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        int position = getPosition(itemId);
+
+        //http://stackoverflow.com/questions/4932462/animate-the-transition-between-fragments
+        if(selectedPosition != position) {
+            if(selectedPosition < position) {
+                //right
+                transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left,
+                        R.anim.enter_from_left, R.anim.exit_to_right);
+            } else {
+                //left
+                transaction.setCustomAnimations(R.anim.enter_from_left,
+                        R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_left);
+            }
+        }
+
+        selectedPosition = position;
+
         switch (itemId) {
             case R.id.action_translate:
-                selectedPosition = 0;
-               // transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
                 transaction.replace(R.id.main_container, translateFragment).commit();
                 break;
             case R.id.action_history:
-                selectedPosition = 1;
-                //transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
                 transaction.replace(R.id.main_container, historyFragment).commit();
                 break;
             case R.id.action_favorites:
-                selectedPosition = 2;
-               // transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
                 transaction.replace(R.id.main_container, favoritesFragment).commit();
                 break;
-            case R.id.action_settings:
-                selectedPosition = 3;
-               // transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
-                transaction.replace(R.id.main_container, settingsFragment).commit();
-                break;
         }
-    }
+    }*/
 
     private void setUpToolbar(int id) {
         if(toolbar == null)

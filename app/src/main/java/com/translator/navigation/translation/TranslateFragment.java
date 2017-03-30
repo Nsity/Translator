@@ -55,6 +55,20 @@ public class TranslateFragment extends Fragment {
 
     private Languages languages;
 
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        inputLangTextView = (TextView) toolbar.findViewById(R.id.input_lang);
+        translationLangTextView = (TextView) toolbar.findViewById(R.id.translation_lang);
+        switchImageButton = (ImageButton) toolbar.findViewById(R.id.switch_lang);
+
+        //add text and click listeners on buttons
+        setUpActionButtonsOnToolbar();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -90,13 +104,7 @@ public class TranslateFragment extends Fragment {
         resultTextView = (TextView) rootView.findViewById(R.id.result_text);
 
 
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        inputLangTextView = (TextView) toolbar.findViewById(R.id.input_lang);
-        translationLangTextView = (TextView) toolbar.findViewById(R.id.translation_lang);
-        switchImageButton = (ImageButton) toolbar.findViewById(R.id.switch_lang);
 
-        //add text and click listeners on buttons
-        setUpActionButtonsOnToolbar();
 
 
         inputEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -145,6 +153,7 @@ public class TranslateFragment extends Fragment {
         });
 
 
+        //TODO переделать на класс, чтобы не было как в HistoryFragment
         inputEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {

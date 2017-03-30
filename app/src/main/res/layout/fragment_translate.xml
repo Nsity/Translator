@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/edit_text_translate"
             android:minLines="5"
-            android:lines="8"
+            android:lines="5"
             android:gravity="top"
             android:paddingTop="4dp"
             android:paddingBottom="8dp"

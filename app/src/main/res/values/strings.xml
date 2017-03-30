@@ -49,4 +49,5 @@
     <string name="no_translations_in_favorites">Нет переводов в избранном</string>
     <string name="no_translations_in_history">Нет переводов в истории</string>
     <string name="not_found">Ничего не найдено</string>
+    <string name="clear">Очистить</string>
 </resources>
