@@ -99,18 +99,22 @@ public class MainActivity extends AppCompatActivity {
         switch (itemId) {
             case R.id.action_translate:
                 selectedPosition = 0;
+               // transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
                 transaction.replace(R.id.main_container, translateFragment).commit();
                 break;
             case R.id.action_history:
                 selectedPosition = 1;
+                //transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
                 transaction.replace(R.id.main_container, historyFragment).commit();
                 break;
             case R.id.action_favorites:
                 selectedPosition = 2;
+               // transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
                 transaction.replace(R.id.main_container, favoritesFragment).commit();
                 break;
             case R.id.action_settings:
                 selectedPosition = 3;
+               // transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
                 transaction.replace(R.id.main_container, settingsFragment).commit();
                 break;
         }

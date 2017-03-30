@@ -14,6 +14,8 @@
     <string name="no">Отмена</string>
     <string name="find_in_history">Найти в истории</string>
     <string name="find_in_favorites">Найти в избранном</string>
+    <string name="text_delete">Удаление</string>
+    <string name="delete_chosen_item">Удалить выбранный перевод?</string>
 
 
 
@@ -46,4 +48,5 @@
     <string name="error_tracker_timeout_error">Превышено время ожидания ответа. Повторите действие позже</string>
     <string name="no_translations_in_favorites">Нет переводов в избранном</string>
     <string name="no_translations_in_history">Нет переводов в истории</string>
+    <string name="not_found">Ничего не найдено</string>
 </resources>

@@ -55,6 +55,10 @@ public abstract class Translations {
     protected abstract void loadFromDB();
     protected abstract void delete();
 
+    protected abstract void deleteItem(int i);
+
+    protected abstract void search(String query);
+
     public ArrayList<Translation> getTranslations() {
         return arrayList;
     }

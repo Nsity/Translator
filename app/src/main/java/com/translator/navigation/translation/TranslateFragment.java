@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.Selection;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -103,6 +104,9 @@ public class TranslateFragment extends Fragment {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
 
+                    if(CommonFunctions.StringIsNullOrEmpty(inputEditText.getText().toString())) {
+                        return;
+                    }
 
                     //сохраняем перевод в истории
                     Translation translation = new Translation(getActivity());
@@ -263,10 +267,15 @@ public class TranslateFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     switchLanguages();
-                    inputEditText.setText(resultTextView.getText().toString());
-                    inputEditText.setSelection(inputEditText.getText().length());
-                    translateText(resultTextView.getText().toString());
 
+                    String inputText = inputEditText.getText().toString();
+
+                   // inputEditText.setText("");
+                    inputEditText.setText(resultTextView.getText().toString());
+                    resultTextView.setText(inputText);
+                   /* if(!CommonFunctions.StringIsNullOrEmpty(inputEditText.getText().toString())) {
+                        translateText(resultTextView.getText().toString());
+                    }*/
                 }
             });
         }

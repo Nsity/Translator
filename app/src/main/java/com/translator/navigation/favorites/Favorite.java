@@ -29,4 +29,15 @@ public class Favorite extends Translations {
         db.deleteFavorite();
         loadFromDB();
     }
+
+    @Override
+    protected void deleteItem(int i) {
+        db.deleteFavoriteItem(arrayList.get(i).getId());
+        loadFromDB();
+    }
+
+    @Override
+    protected void search(String query) {
+
+    }
 }

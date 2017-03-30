@@ -104,4 +104,10 @@ public class TranslationAdapter extends BaseAdapter {
             button.setColorFilter(ContextCompat.getColor(context, R.color.colorBlueGray3));
         }
     }
+
+    public void update(ArrayList<Translation> arrayList) {
+        this.arrayList.clear();
+        this.arrayList.addAll(arrayList);
+        notifyDataSetChanged();
+    }
 }
