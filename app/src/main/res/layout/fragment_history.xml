@@ -67,6 +67,7 @@
                 android:layout_marginBottom="8dp"
                 android:tint="@color/grey_color_8"
                 android:layout_height="wrap_content"
+                android:id="@+id/no_translations_image_view"
                 android:contentDescription="@string/text_history" />
             <TextView
                 android:layout_width="wrap_content"

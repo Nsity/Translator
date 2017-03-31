@@ -1,18 +1,24 @@
 package com.translator.navigation.favorites;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -97,6 +103,42 @@ public class FavoritesFragment extends Fragment {
             public void onClick(View view) {
                 searchEditText.setText("");
                 clearButton.setVisibility(View.GONE);
+            }
+        });
+
+
+        clearButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View arg0, MotionEvent me) {
+                if (me.getAction() == MotionEvent.ACTION_DOWN) {
+                    clearButton.setColorFilter(getResources().getColor(R.color.listSelector));
+                    return false;
+                } else if (me.getAction() == MotionEvent.ACTION_UP) {
+                    clearButton.setColorFilter(Color.BLACK); // or null
+                    return false;
+                }
+                return false;
+            }
+
+        });
+
+
+        searchEditText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+
+                    searchEditText.clearFocus();
+                    try {
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    return true;
+                }
+                return false;
             }
         });
 

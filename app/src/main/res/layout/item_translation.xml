@@ -28,16 +28,22 @@
         android:layout_toRightOf="@+id/is_favorite"
         android:layout_toLeftOf="@+id/languages_text">
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:textSize="15sp"
             android:textColor="@android:color/black"
             android:layout_marginBottom="4dp"
             android:id="@+id/input_text"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:scrollHorizontally="true"
+            android:maxLines="1" />
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:textSize="15sp"
             android:id="@+id/translation_text"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:ellipsize="end"
             android:textColor="@color/colorGray7"
             android:layout_height="wrap_content" />
     </LinearLayout>

@@ -6,7 +6,7 @@
     <string name="text_translator">Переводчик</string>
     <string name="text_history">История</string>
     <string name="text_settings">Настройки</string>
-    <string name="edit_text_translate">Введите текст или адрес сайта</string>
+    <string name="edit_text_translate">Введите текст</string>
     <string name="delete_all">Удалить все</string>
     <string name="delete_all_message_in_history">Вы уверены, что хотите отчистить историю?</string>
     <string name="delete_all_message_in_favorites">Вы уверены, что хотите отчистить избранное?</string>

@@ -3,6 +3,7 @@ package com.translator.navigation.history;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.media.Image;
 import android.os.Bundle;
@@ -93,6 +94,41 @@ public class HistoryFragment extends Fragment {
             public void onClick(View view) {
                 searchEditText.setText("");
                 clearButton.setVisibility(View.GONE);
+            }
+        });
+
+        clearButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View arg0, MotionEvent me) {
+                if (me.getAction() == MotionEvent.ACTION_DOWN) {
+                    clearButton.setColorFilter(getResources().getColor(R.color.listSelector));
+                    return false;
+                } else if (me.getAction() == MotionEvent.ACTION_UP) {
+                    clearButton.setColorFilter(Color.BLACK); // or null
+                    return false;
+                }
+                return false;
+            }
+
+        });
+
+
+        searchEditText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+
+                    searchEditText.clearFocus();
+                    try {
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    return true;
+                }
+                return false;
             }
         });
 

@@ -26,6 +26,7 @@ public class LanguageActivity extends AppCompatActivity {
     public static final int TRANSLATION_LANG = 2;
 
     public static final String ACTION = "action";
+    public static final String SELECTED_LANG = "selected_lang";
 
     private ArrayList<Language> arrayList;
     private ListView languagesListView;
@@ -81,11 +82,16 @@ public class LanguageActivity extends AppCompatActivity {
         languagesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                switch (intent.getIntExtra(ACTION, 0)) {
+                languagesAdapter.update(arrayList.get(i).getName());
+
+                intent.putExtra(SELECTED_LANG, arrayList.get(i).getName());
+                setResult(RESULT_OK, intent);
+                onBackPressed();
+
+               /* switch (intent.getIntExtra(ACTION, 0)) {
                     case INPUT_LANG:
                         Preferences.set(Preferences.input_lang, arrayList.get(i).getName(), getApplicationContext());
                         languagesAdapter.update(arrayList.get(i).getName());
-
                         setResult(RESULT_OK, intent);
                         onBackPressed();
                         break;
@@ -96,7 +102,7 @@ public class LanguageActivity extends AppCompatActivity {
                         setResult(RESULT_OK, intent);
                         onBackPressed();
                         break;
-                }
+                }*/
             }
         });
     }

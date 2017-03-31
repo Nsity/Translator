@@ -3,12 +3,15 @@ package com.translator.navigation.translation;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.ButtonBarLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.Selection;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -17,7 +20,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -54,29 +59,34 @@ public class TranslateFragment extends Fragment {
     private View rootView;
 
     private Languages languages;
+    private ImageButton clearButton;
 
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        //работа с элементами тулбара
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         inputLangTextView = (TextView) toolbar.findViewById(R.id.input_lang);
         translationLangTextView = (TextView) toolbar.findViewById(R.id.translation_lang);
         switchImageButton = (ImageButton) toolbar.findViewById(R.id.switch_lang);
 
-        //add text and click listeners on buttons
         setUpActionButtonsOnToolbar();
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_translate, container, false);
 
-        languages = new Languages(getActivity());
+        inputEditText = (EditText) rootView.findViewById(R.id.input_text);
+        resultTextView = (TextView) rootView.findViewById(R.id.result_text);
+        clearButton = (ImageButton) rootView.findViewById(R.id.clear_button);
 
+
+        //убираем клавиатуру и фокус с поля ввода, когда происходит нажатие за его пределами
         LinearLayout touchInterceptor = (LinearLayout) rootView.findViewById(R.id.touch_interceptor);
         touchInterceptor.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -87,9 +97,7 @@ public class TranslateFragment extends Fragment {
                         inputEditText.getGlobalVisibleRect(outRect);
                         if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
                             inputEditText.clearFocus();
-                            //
                             // Hide keyboard
-                            //
                             InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                         }
@@ -100,11 +108,39 @@ public class TranslateFragment extends Fragment {
         });
 
 
-        inputEditText = (EditText) rootView.findViewById(R.id.input_text);
-        resultTextView = (TextView) rootView.findViewById(R.id.result_text);
+        //загружаем все языки из БД
+        languages = new Languages(getActivity());
+
+        //нужно для того, чтобы поле было многострочным, но оторажалась кнопка Готово
+        inputEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        inputEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
 
 
+        //при нажатии делаем выделение
+        clearButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View arg0, MotionEvent me) {
+                if (me.getAction() == MotionEvent.ACTION_DOWN) {
+                    clearButton.setColorFilter(getResources().getColor(R.color.listSelector));
+                    return false;
+                } else if (me.getAction() == MotionEvent.ACTION_UP) {
+                    clearButton.setColorFilter(Color.BLACK); // or null
+                    return false;
+                }
+                return false;
+            }
 
+        });
+
+        //очищаем поле ввода
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                inputEditText.setText("");
+                resultTextView.setText("");
+                clearButton.setVisibility(View.GONE);
+            }
+        });
 
 
         inputEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -112,11 +148,12 @@ public class TranslateFragment extends Fragment {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
 
+                    //если поле не пустое
                     if(CommonFunctions.StringIsNullOrEmpty(inputEditText.getText().toString())) {
                         return;
                     }
-
-                    //сохраняем перевод в истории
+                    //сохраняем перевод в историю
+                    //TODO сделать глобальным, чтобы потом сохранять в избранное или как???
                     Translation translation = new Translation(getActivity());
                     translation.setInputText(inputEditText.getText().toString().trim());
                     translation.setInputLang(Preferences.get(Preferences.input_lang, getActivity()));
@@ -131,11 +168,11 @@ public class TranslateFragment extends Fragment {
             }
         });
 
-        inputEditText.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // If the event is a key-down event on the "enter" button
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+
+        inputEditText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
 
                     inputEditText.clearFocus();
                     try {
@@ -145,7 +182,6 @@ public class TranslateFragment extends Fragment {
                         e.printStackTrace();
                     }
 
-
                     return true;
                 }
                 return false;
@@ -153,10 +189,12 @@ public class TranslateFragment extends Fragment {
         });
 
 
-        //TODO переделать на класс, чтобы не было как в HistoryFragment
+        //отслеживаем изменения в поле ввода
         inputEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
+
+                //TODO добавить кэш и ошибки исправить
                 // Прописываем то, что надо выполнить после изменения текста
                 Log.i("TAG", inputEditText.getText().toString());
                 String inputText = inputEditText.getText().toString();
@@ -201,6 +239,12 @@ public class TranslateFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //показываем или скрываем кнопку Очистить
+                if(CommonFunctions.StringIsNullOrEmpty(inputEditText.getText().toString())) {
+                    clearButton.setVisibility(View.GONE);
+                } else {
+                    clearButton.setVisibility(View.VISIBLE);
+                }
             }
         });
 
@@ -216,17 +260,36 @@ public class TranslateFragment extends Fragment {
 
         if (requestCode == LANG_REQUEST_CODE) {
             if(resultCode == Activity.RESULT_OK) {
-                switch (data.getIntExtra(LanguageActivity.ACTION, 0)) {
-                    case LanguageActivity.INPUT_LANG:
 
+                String inputLang = Preferences.get(Preferences.input_lang, getActivity());
+                String translationLang = Preferences.get(Preferences.translation_lang, getActivity());
 
-                        setInputLangTextView();
-                        break;
-                    case LanguageActivity.TRANSLATION_LANG:
-                        setTranslationLangTextView();
-                        break;
+                //меняем выбранный язык - если он совпадает с другим, то другой заменяем на старый
+                String selectedLang = data.getStringExtra(LanguageActivity.SELECTED_LANG);
+                if(!CommonFunctions.StringIsNullOrEmpty(selectedLang)) {
+                    switch (data.getIntExtra(LanguageActivity.ACTION, 0)) {
+                        case LanguageActivity.INPUT_LANG:
+                            if(selectedLang.equals(translationLang)) {
+                                Preferences.set(Preferences.translation_lang, inputLang, getActivity());
+                                setTranslationLangTextView();
+                            }
+                            Preferences.set(Preferences.input_lang, selectedLang, getActivity());
+                            setInputLangTextView();
+                            break;
+                        case LanguageActivity.TRANSLATION_LANG:
+                            if(selectedLang.equals(inputLang)) {
+                                Preferences.set(Preferences.input_lang, translationLang, getActivity());
+                                setInputLangTextView();
+                            }
+                            Preferences.set(Preferences.translation_lang, selectedLang, getActivity());
+                            setTranslationLangTextView();
+                            break;
 
+                    }
                 }
+
+                //переводим текст
+                translateText(inputEditText.getText().toString());
             }
         }
 
@@ -275,6 +338,7 @@ public class TranslateFragment extends Fragment {
             switchImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                   //TODO
                     switchLanguages();
 
                     String inputText = inputEditText.getText().toString();
@@ -318,6 +382,10 @@ public class TranslateFragment extends Fragment {
      * @param inputText - текст, который необходимо перевести
      */
     private void translateText(final String inputText) {
+        if(CommonFunctions.StringIsNullOrEmpty(inputText)) {
+            return;
+        }
+
         //направление перевода
         String langPair = Preferences.get(Preferences.input_lang, getActivity()) + "-" +
                 Preferences.get(Preferences.translation_lang, getActivity());
