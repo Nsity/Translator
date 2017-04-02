@@ -25,7 +25,7 @@ public class Preferences {
         sPref.edit().putString(fieldName, value).apply();
     }
 
-    public static void set(String fieldName, boolean value, Context context){
+    public synchronized static void set(String fieldName, boolean value, Context context){
         if (sPref == null)
             sPref = context.getSharedPreferences(accountType, Context.MODE_PRIVATE);
 
@@ -33,7 +33,7 @@ public class Preferences {
 
     }
 
-    public static String get(String fieldName, Context context){
+    public synchronized static String get(String fieldName, Context context){
         if (sPref == null)
             sPref = context.getSharedPreferences(accountType, Context.MODE_PRIVATE);
 

@@ -1,98 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:paddingTop="8dp"
-        android:paddingRight="8dp"
-        android:paddingLeft="8dp"
         android:id="@+id/touch_interceptor"
-        android:layout_height="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <EditText
+                android:id="@+id/input_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/edit_text_translate"
-                android:lines="4"
-                android:inputType="textMultiLine"
-                android:minLines="4"
-                android:maxLines="4"
+                android:layout_marginBottom="8dp"
+                android:background="@xml/border"
                 android:gravity="top"
+                android:hint="@string/edit_text_translate"
                 android:imeOptions="actionDone"
-                android:paddingTop="4dp"
+                android:inputType="textMultiLine"
+                android:lines="4"
+                android:maxLines="4"
+                android:minLines="4"
                 android:paddingBottom="32dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
-                android:background="@xml/border"
+                android:paddingTop="4dp"
                 android:scrollHorizontally="false"
-                android:id="@+id/input_text"
-                android:textCursorDrawable="@drawable/custom_cursor_drawable"
-                android:layout_marginBottom="8dp">
-            </EditText>
+                android:textCursorDrawable="@drawable/custom_cursor_drawable" />
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:src="@mipmap/ic_clear_black_24dp"
-                android:background="@android:color/transparent"
-                android:layout_height="wrap_content"
                 android:id="@+id/clear_button"
-                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/input_text"
+                android:layout_alignParentEnd="true"
                 android:layout_marginBottom="4dp"
                 android:layout_marginRight="4dp"
+                android:tint="@color/colorGray7"
+                android:visibility="gone"
+                android:background="@android:color/transparent"
                 android:contentDescription="@string/clear"
-                android:layout_alignBottom="@+id/input_text"
-                android:layout_alignParentEnd="true" />
+                android:src="@mipmap/ic_clear_black_24dp" />
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_marginBottom="4dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
             <ImageView
-                android:layout_width="24dp"
-                android:src="@drawable/yandex_icon"
                 android:id="@+id/yandex_icon"
-                android:layout_marginRight="4dp"
+                android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
-                android:contentDescription="@string/yandex" />
+                android:layout_marginRight="4dp"
+                android:contentDescription="@string/yandex"
+                android:src="@drawable/yandex_icon" />
+
             <TextView
                 android:layout_width="match_parent"
-                android:text="@string/translate_with_yandex"
-                android:layout_centerVertical="true"
-                android:gravity="left"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/yandex_icon" />
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/yandex_icon"
+                android:gravity="left"
+                android:text="@string/translate_with_yandex" />
         </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:id="@+id/error_layout"
+            android:visibility="gone"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="match_parent"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:id="@+id/error_text"
+                android:textColor="@android:color/black"
+                android:text="@string/connection_error"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"
+                android:id="@+id/error_description_text"
+                android:text="@string/check_internet_connection_and_try_again"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:text="@string/try_again"
+                android:layout_gravity="center"
+                android:id="@+id/try_again_button"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
 
         <RelativeLayout
             android:layout_width="match_parent"
+            android:id="@+id/translation_layout"
+            android:visibility="gone"
             android:layout_height="wrap_content">
             <ImageButton
+                android:id="@+id/favorite_button"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="5dp"
                 android:background="@android:color/transparent"
                 android:src="@mipmap/ic_bookmark_black_24dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:tint="@color/colorGray7"
-                android:layout_marginLeft="16dp"
-                android:id="@+id/imageButton" />
-            <TextView
+                android:tint="@color/colorGray7" />
+
+            <ScrollView
                 android:layout_width="match_parent"
-                android:id="@+id/result_text"
-                android:textSize="20sp"
-                android:layout_marginLeft="4dp"
-                android:textColor="@android:color/black"
-                android:layout_height="wrap_content"
-                android:layout_toStartOf="@+id/imageButton" />
+                android:layout_marginLeft="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="8dp"
+                android:clickable="true"
+                android:layout_toStartOf="@+id/favorite_button"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/result_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+            </ScrollView>
         </RelativeLayout>
     </LinearLayout>
 

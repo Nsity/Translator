@@ -20,13 +20,6 @@ public class CommonFunctions {
         return (string == null) || (string.isEmpty());
     }
 
-    public static String setFirstLetterUpperCase(String str) {
-        if(StringIsNullOrEmpty(str))
-            return str;
-        return str.substring(0,1).toUpperCase() + str.substring(1).toLowerCase();
-    }
-
-
 
     public static String getFieldString(JSONObject jsonObject, String field) {
         try {

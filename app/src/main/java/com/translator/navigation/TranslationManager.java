@@ -6,7 +6,9 @@ import android.util.Log;
 import com.loopj.android.http.RequestParams;
 import com.translator.R;
 import com.translator.system.CommonFunctions;
+import com.translator.system.Preferences;
 import com.translator.system.database.LanguageDBInterface;
+import com.translator.system.database.TranslationDBInterface;
 import com.translator.system.network.AsyncHttpResponse;
 import com.translator.system.network.CallBack;
 import com.translator.system.network.ErrorTracker;
@@ -27,18 +29,16 @@ public class TranslationManager {
     /**
      * API Перевод текста
      * @param context
-     * @param inputText - текст, который нужно перевести
-     * @param lang - направление текста
+     * @param translation - перевод
      * @param callBack
      */
-    public static void translate(final Context context, String inputText,
-                                 String lang, final CallBack callBack) {
+    public static void translate(final Context context, final Translation translation, final CallBack callBack) {
 
         String method = context.getResources().getString(R.string.api_translate);
         RequestParams params = new RequestParams();
         params.put(context.getString(R.string.par_key), context.getString(R.string.api_key));
-        params.put(context.getString(R.string.par_text), inputText);
-        params.put(context.getString(R.string.par_lang), lang);
+        params.put(context.getString(R.string.par_text), translation.getInputText());
+        params.put(context.getString(R.string.par_lang), translation.getInputLang() + "-" + translation.getTranslationLang());
 
         String url = context.getString(R.string.main_http) + method;
 
@@ -51,12 +51,18 @@ public class TranslationManager {
                 }
                 try {
                     JSONObject response = (JSONObject) object.getResponse();
-                    if(CommonFunctions.getFieldInt(response,
-                            context.getString(R.string.par_code)) == 200) {
-                            ArrayList<String> result =
-                                    getTranslations(response.getJSONArray(context.getString(R.string.par_text)));
+
+
+                    if(CommonFunctions.getFieldInt(response, context.getString(R.string.par_code)) == 200) {
+                        ArrayList<String> result = getTranslations(response.getJSONArray(context.getString(R.string.par_text)));
+
+                        translation.setTranslationText(listToStr(result).trim());
+
+                        //TODO
+                        translation.setFavorite(new TranslationDBInterface(context).checkFavorite(translation));
+
                         if(result != null) {
-                            callBack.onSuccess(result);
+                            callBack.onSuccess(translation);
                         }
                     }
                 } catch (JSONException e) {
@@ -70,6 +76,20 @@ public class TranslationManager {
                         String.valueOf(object.getResponse())));
             }
         });
+    }
+
+    /**
+     * переводит список переводов в строку
+     * @param arr - список переводов
+     * @return - строка
+     */
+    private static String listToStr(ArrayList<String> arr) {
+        String resStr = "";
+        for (String str: arr) {
+            resStr += str + "\n";
+        }
+
+        return resStr;
     }
 
 
@@ -115,13 +135,24 @@ public class TranslationManager {
             @Override
             public void onSuccess(ResponseObject object) {
                 if (!(object.getResponse() instanceof JSONObject)) {
-
-
+                    callBack.onFail(context.getString(R.string.error_occurred));
                     return;
                 }
 
                 JSONObject response = (JSONObject) object.getResponse();
-                callBack.onSuccess(response);
+
+                try {
+                    if (CommonFunctions.getFieldInt(response,
+                            context.getString(R.string.par_code)) == 200) {
+                        String result = response.getString(context.getString(R.string.par_lang));
+                        if (result != null) {
+                            callBack.onSuccess(result);
+                        }
+                    }
+                } catch (JSONException e) {
+                    callBack.onFail(context.getString(R.string.error_occurred));
+                    e.printStackTrace();
+                }
             }
 
             @Override
