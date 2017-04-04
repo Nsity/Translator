@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -28,7 +27,6 @@ import android.widget.TextView;
 
 import com.translator.R;
 import com.translator.navigation.Translation;
-import com.translator.navigation.history.History;
 import com.translator.navigation.history.TranslationAdapter;
 import com.translator.system.CommonFunctions;
 
@@ -50,6 +48,9 @@ public abstract class TranslationFragment extends Fragment {
 
     protected ImageView noTranslationsImageView;
 
+
+    protected OnChangedFragmentInterface onShowTranslationInterface;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -62,6 +63,9 @@ public abstract class TranslationFragment extends Fragment {
         clearButton = (ImageButton) rootView.findViewById(R.id.clear_button);
 
         noTranslationsImageView = (ImageView) rootView.findViewById(R.id.no_translations_image_view);
+
+
+        onShowTranslationInterface = (OnChangedFragmentInterface) getActivity();
 
         setHasOptionsMenu(true);
 
@@ -135,8 +139,7 @@ public abstract class TranslationFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 Translation translation = arrayList.get(i);
-
-                
+                onShowTranslationInterface.showFragment(translation);
             }
         });
 

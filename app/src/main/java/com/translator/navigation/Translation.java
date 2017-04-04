@@ -5,11 +5,13 @@ import android.content.Context;
 
 import com.translator.system.database.TranslationDBInterface;
 
+import java.io.Serializable;
+
 /**
  * Created by nsity on 20.03.17.
  */
 
-public class Translation {
+public class Translation implements Serializable {
 
     private int id;
     private boolean isFavorite;

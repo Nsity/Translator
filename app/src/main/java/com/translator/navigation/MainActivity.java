@@ -15,21 +15,13 @@ import android.view.MenuItem;
 import android.view.View;
 
 import android.view.ViewTreeObserver;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.translator.R;
-import com.translator.navigation.favorites.FavoritesFragment;
-import com.translator.navigation.history.HistoryFragment;
-import com.translator.navigation.translation.TranslateFragment;
-import com.translator.system.CommonFunctions;
-import com.translator.system.Language;
-import com.translator.system.Preferences;
-import com.translator.system.network.CallBack;
+import com.translator.navigation.favorites.OnChangedFragmentInterface;
+import com.translator.navigation.favorites.OnShowTranslationInterface;
 
-import java.util.Locale;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnChangedFragmentInterface {
 
     private Fragment translateFragment, historyFragment, favoritesFragment, settingsFragment;
     private FragmentManager fragmentManager;
@@ -41,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
     int selectedPosition = 0;
 
     private CoordinatorLayout rootView;
+
+
+    private OnShowTranslationInterface onShowTranslationInterface;
 
 
     private final static int TRANSLATE_ITEM = 0;
@@ -68,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
             transaction.hide(fragment);
         }
         transaction.commit();
+
+
+        onShowTranslationInterface = (OnShowTranslationInterface) fragments[TRANSLATE_ITEM];
 
 
         rootView = (CoordinatorLayout) findViewById(R.id.root_view);
@@ -267,5 +265,13 @@ public class MainActivity extends AppCompatActivity {
     private void updateNavigationBarState(int actionId){
         Menu menu = bottomNavigationView.getMenu();
         menu.findItem(actionId).setChecked(true);
+    }
+
+    @Override
+    public void showFragment(Translation translation) {
+        displayView(R.id.action_translate);
+        updateNavigationBarState(R.id.action_translate);
+
+        onShowTranslationInterface.showTranslation(translation);
     }
 }

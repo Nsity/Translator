@@ -33,6 +33,7 @@ import android.widget.TextView;
 import com.translator.R;
 import com.translator.navigation.Translation;
 import com.translator.navigation.TranslationManager;
+import com.translator.navigation.favorites.OnShowTranslationInterface;
 import com.translator.system.CommonFunctions;
 import com.translator.system.ConnectionDialog;
 import com.translator.system.Preferences;
@@ -48,7 +49,7 @@ import java.util.ArrayList;
  * Created by nsity on 18.03.17.
  */
 
-public class TranslateFragment extends Fragment {
+public class TranslateFragment extends Fragment implements OnShowTranslationInterface {
 
     //https://github.com/rmtheis/yandex-translator-java-api
     private EditText inputEditText;
@@ -83,6 +84,8 @@ public class TranslateFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        //String myValue = this.getArguments().getString("message");
 
         rootView = inflater.inflate(R.layout.fragment_translate, container, false);
 
@@ -553,5 +556,16 @@ public class TranslateFragment extends Fragment {
     }
 
 
+    @Override
+    public void showTranslation(Translation translation) {
+        translationLayout.setVisibility(View.VISIBLE);
 
+        resultTextView.setText(translation.getTranslationText());
+        inputEditText.setText(translation.getInputText());
+
+        setTranslationLang(translation.getTranslationLang());
+        setInputLang(translation.getInputLang());
+
+        updateFavoriteButton(translation.isFavorite());
+    }
 }
