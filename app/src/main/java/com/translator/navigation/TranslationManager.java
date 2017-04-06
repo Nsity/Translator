@@ -1,12 +1,10 @@
 package com.translator.navigation;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.loopj.android.http.RequestParams;
 import com.translator.R;
 import com.translator.system.CommonFunctions;
-import com.translator.system.Preferences;
 import com.translator.system.database.LanguageDBInterface;
 import com.translator.system.database.TranslationDBInterface;
 import com.translator.system.network.AsyncHttpResponse;
@@ -36,11 +34,11 @@ public class TranslationManager {
 
         String method = context.getResources().getString(R.string.api_translate);
         RequestParams params = new RequestParams();
-        params.put(context.getString(R.string.par_key), context.getString(R.string.api_key));
+        params.put(context.getString(R.string.par_key), context.getString(R.string.yandex_translate_api_key));
         params.put(context.getString(R.string.par_text), translation.getInputText());
         params.put(context.getString(R.string.par_lang), translation.getInputLang() + "-" + translation.getTranslationLang());
 
-        String url = context.getString(R.string.main_http) + method;
+        String url = context.getString(R.string.yandex_translate_http) + method;
 
         new AsyncHttpResponse(context, url, params,AsyncHttpResponse.CALL_POST_JSON_HTTP_RESPONSE,
                 new CallBack<ResponseObject>() {
@@ -121,13 +119,13 @@ public class TranslationManager {
         String method = context.getResources().getString(R.string.api_detect);
 
         RequestParams params = new RequestParams();
-        params.put(context.getString(R.string.par_key), context.getString(R.string.api_key));
+        params.put(context.getString(R.string.par_key), context.getString(R.string.yandex_translate_api_key));
         params.put(context.getString(R.string.par_text), inputText);
 
         if(!CommonFunctions.StringIsNullOrEmpty(hint))
             params.put(context.getString(R.string.par_hint), hint);
 
-        String url = context.getString(R.string.main_http) + method;
+        String url = context.getString(R.string.yandex_translate_http) + method;
 
 
         new AsyncHttpResponse(context, url, params,AsyncHttpResponse.CALL_POST_JSON_HTTP_RESPONSE,
@@ -167,12 +165,12 @@ public class TranslationManager {
         String method = context.getResources().getString(R.string.api_get_langs);
 
         RequestParams params = new RequestParams();
-        params.put(context.getString(R.string.par_key), context.getString(R.string.api_key));
+        params.put(context.getString(R.string.par_key), context.getString(R.string.yandex_translate_api_key));
 
         if(lang != null)
             params.put(context.getString(R.string.par_ui), lang);
 
-        String url = context.getString(R.string.main_http) + method;
+        String url = context.getString(R.string.yandex_translate_http) + method;
 
         new AsyncHttpResponse(context, url, params,AsyncHttpResponse.CALL_POST_JSON_HTTP_RESPONSE,
                 new CallBack<ResponseObject>() {

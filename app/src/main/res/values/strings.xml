@@ -19,12 +19,15 @@
 
 
 
-    <string name="main_http">https://translate.yandex.net/api/v1.5/tr.json/</string>
+    <string name="yandex_translate_http">https://translate.yandex.net/api/v1.5/tr.json/</string>
+    <string name="yandex_dictionary_http">https://dictionary.yandex.net/api/v1/dicservice.json/</string>
     <string name="api_translate">translate</string>
     <string name="api_detect">detect</string>
     <string name="api_get_langs">getLangs</string>
+    <string name="api_lookup">lookup</string>
 
-    <string name="api_key">trnsl.1.1.20170318T153333Z.9e2a34d3abd9dd27.396aec68f7a23e0ab030865f817666cce3ae2cdb</string>
+    <string name="yandex_translate_api_key">trnsl.1.1.20170318T153333Z.9e2a34d3abd9dd27.396aec68f7a23e0ab030865f817666cce3ae2cdb</string>
+    <string name="yandex_dictionary_api_key">dict.1.1.20170406T125559Z.12e2e70a589a9cd5.ce2456edd85f5584a5bc7a78f2c05efabaa013f7</string>
     <string name="par_key">key</string>
     <string name="par_text">text</string>
     <string name="par_lang">lang</string>
@@ -54,4 +57,5 @@
     <string name="check_internet_connection_and_try_again">Проверьте подключение к Интернету\nи повторите попытку</string>
     <string name="try_again_later">Повторите попытку позже</string>
     <string name="try_again">Повторить</string>
+    <string name="browser">Браузер</string>
 </resources>

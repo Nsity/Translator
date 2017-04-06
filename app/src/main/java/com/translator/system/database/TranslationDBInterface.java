@@ -45,8 +45,8 @@ public class TranslationDBInterface extends ADBWorker {
     public boolean checkFavorite(Translation translation) {
         String selectQuery = "SELECT * FROM " + TRANSLATION_TABLE_NAME + " WHERE " + TRANSLATION_COLUMN_INPUT_TEXT +
                 " =? AND " + TRANSLATION_COLUMN_INPUT_LANG + " =? AND " +
-                TRANSLATION_COLUMN_TRANSLATION_TEXT + " =? AND " + TRANSLATION_COLUMN_TRANSLATION_LANG + " =?  AND " +
-                TRANSLATION_COLUMN_IN_FAVORITE + " = 'true' ";
+                TRANSLATION_COLUMN_TRANSLATION_TEXT + " =? AND " + TRANSLATION_COLUMN_TRANSLATION_LANG + " =? AND " +
+                TRANSLATION_COLUMN_IN_FAVORITE + " = 1";
 
         Cursor cursor = getCursor(selectQuery, new String[]{translation.getInputText(), translation.getInputLang(), translation.getTranslationText(), translation.getTranslationLang()});
 
