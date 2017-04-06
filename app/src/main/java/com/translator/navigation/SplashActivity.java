@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.translator.R;
-import com.translator.navigation.translation.Languages;
+import com.translator.navigation.translate.Languages;
 import com.translator.system.CommonFunctions;
 import com.translator.system.Preferences;
 import com.translator.system.network.CallBack;

@@ -29,7 +29,7 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
-        <activity android:name=".navigation.translation.LanguageActivity"
+        <activity android:name=".navigation.translate.LanguageActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>

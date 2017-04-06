@@ -1,4 +1,4 @@
-package com.translator.navigation.translation;
+package com.translator.navigation.translate;
 
 import android.content.Context;
 import android.database.Cursor;

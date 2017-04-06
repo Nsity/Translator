@@ -1,4 +1,4 @@
-package com.translator.navigation.favorites;
+package com.translator.navigation.translation.favorites;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -27,7 +27,7 @@ import android.widget.TextView;
 
 import com.translator.R;
 import com.translator.navigation.Translation;
-import com.translator.navigation.history.TranslationAdapter;
+import com.translator.navigation.translation.history.TranslationAdapter;
 import com.translator.system.CommonFunctions;
 
 import java.util.ArrayList;
@@ -137,7 +137,6 @@ public abstract class TranslationFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
                 Translation translation = arrayList.get(i);
                 onShowTranslationInterface.showFragment(translation);
             }

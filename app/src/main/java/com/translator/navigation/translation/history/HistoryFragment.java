@@ -1,4 +1,4 @@
-package com.translator.navigation.favorites;
+package com.translator.navigation.translation.history;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,7 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 
 import com.translator.R;
-import com.translator.navigation.history.TranslationAdapter;
+import com.translator.navigation.translation.favorites.TranslationFragment;
 
 import java.util.ArrayList;
 
@@ -18,22 +18,22 @@ import java.util.ArrayList;
  * Created by fedorova on 31.03.2017.
  */
 
-public class FavoritesFragmentNew extends TranslationFragment {
+public class HistoryFragment extends TranslationFragment {
 
-    private Favorite favorite;
+    private History history;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        favorite = new Favorite(getActivity());
+        history = new History(getActivity());
 
         arrayList = new ArrayList<>();
         adapter = new TranslationAdapter(getActivity(), arrayList);
         listView.setAdapter(adapter);
 
 
-        noTranslationsImageView.setImageDrawable(getResources().getDrawable(R.mipmap.ic_bookmark_black_48dp));
+        noTranslationsImageView.setImageDrawable(getResources().getDrawable(R.mipmap.ic_history_black_48dp));
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -47,7 +47,7 @@ public class FavoritesFragmentNew extends TranslationFragment {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
 
-                                        favorite.deleteItem(i);
+                                        history.deleteItem(i);
 
                                         updateView(false);
 
@@ -77,11 +77,11 @@ public class FavoritesFragmentNew extends TranslationFragment {
         if(isSearch) {
             noTranslationsTextView.setText(getString(R.string.not_found));
         } else {
-            favorite.loadFromDB();
-            noTranslationsTextView.setText(getString(R.string.no_translations_in_favorites));
+            history.loadFromDB();
+            noTranslationsTextView.setText(getString(R.string.no_translations_in_history));
         }
 
-        arrayList = favorite.getTranslations();
+        arrayList = history.getTranslations();
 
         adapter.update(arrayList);
 
@@ -103,7 +103,7 @@ public class FavoritesFragmentNew extends TranslationFragment {
     @Override
     protected void search() {
         String searchQuery = searchEditText.getText().toString();
-        favorite.search(searchQuery);
+        history.search(searchQuery);
         updateView(true);
     }
 
@@ -119,16 +119,15 @@ public class FavoritesFragmentNew extends TranslationFragment {
 
 
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                .setTitle(getString(R.string.text_favorites))
-                .setMessage(R.string.delete_all_message_in_favorites)
+                .setTitle(getString(R.string.text_history))
+                .setMessage(R.string.delete_all_message_in_history)
                 .setCancelable(true)
                 .setPositiveButton(getResources().getString(R.string.yes).toUpperCase(),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                favorite.delete();
 
-
+                                history.delete();
                                 updateView(false);
 
                                 dialog.dismiss();

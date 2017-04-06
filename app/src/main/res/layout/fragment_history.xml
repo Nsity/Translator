@@ -42,9 +42,8 @@
             android:layout_width="match_parent"
             android:id="@+id/history_list_view"
             android:longClickable="true"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
             android:layout_height="match_parent"
+            android:listSelector="@xml/list_selector"
             android:cacheColorHint="@android:color/transparent"
             android:layout_below="@+id/search_edit_text"/>
 

@@ -1,20 +1,17 @@
-package com.translator.navigation.translation;
+package com.translator.navigation.translate;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.ButtonBarLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
-import android.text.Selection;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -35,17 +32,13 @@ import com.translator.R;
 import com.translator.navigation.DictionaryManager;
 import com.translator.navigation.Translation;
 import com.translator.navigation.TranslationManager;
-import com.translator.navigation.favorites.OnShowTranslationInterface;
+import com.translator.navigation.translation.favorites.OnShowTranslationInterface;
 import com.translator.system.CommonFunctions;
-import com.translator.system.ConnectionDialog;
 import com.translator.system.Preferences;
 import com.translator.system.Snackbar;
 import com.translator.system.database.TranslationDBInterface;
 import com.translator.system.network.CallBack;
 import com.translator.system.network.Server;
-
-import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -55,9 +48,9 @@ import java.util.ArrayList;
 
 public class TranslateFragment extends Fragment implements OnShowTranslationInterface {
 
-    //https://github.com/rmtheis/yandex-translator-java-api
     private EditText inputEditText;
-    private TextView resultTextView, errorTextView, errorDescriptionTextView, inputLangTextView, translationLangTextView, dictionaryTextView;
+    private TextView resultTextView, errorTextView, errorDescriptionTextView, inputLangTextView,
+            translationLangTextView, dictionaryTextView;
     private ImageButton switchImageButton;
 
     public static final int LANG_REQUEST_CODE = 2;
@@ -72,7 +65,10 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
     private ImageButton favoriteButton;
 
     private boolean showTranslation = false;
+    private Chache chache;
 
+    public static final int DISABLED_FAVORITE = R.color.colorGray7;
+    public static final int ACTIVE_FAVORITE =  R.color.colorPrimary;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -91,8 +87,6 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        //String myValue = this.getArguments().getString("message");
-
         rootView = inflater.inflate(R.layout.fragment_translate, container, false);
 
         inputEditText = (EditText) rootView.findViewById(R.id.input_text);
@@ -107,8 +101,12 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
         favoriteButton = (ImageButton) rootView.findViewById(R.id.favorite_button);
 
 
+        //кэш
+        chache = new Chache();
+
         TextView yandexTranslateTextView = (TextView) rootView.findViewById(R.id.yandex_translate);
 
+        //ссылка на Яндекс.Переводчик
         yandexTranslateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -129,7 +127,6 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
 
                 Translation translation = getCurrentTranslation();
 
-                //TODO
                 translation.setFavorite(checkFavorite());
                 translation.setInHistory(true);
 
@@ -221,6 +218,14 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
 
+                    inputEditText.clearFocus();
+                    try {
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(inputEditText.getWindowToken(), 0);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                     //если поле не пустое
                     if(CommonFunctions.StringIsNullOrEmpty(inputEditText.getText().toString()) ||
                             CommonFunctions.StringIsNullOrEmpty(resultTextView.getText().toString())) {
@@ -229,7 +234,6 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                     //сохраняем перевод в историю
                     Translation translation = getCurrentTranslation();
 
-                    //TODO
                     translation.setFavorite(checkFavorite());
                     translation.setInHistory(true);
 
@@ -245,8 +249,6 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
 
-
-                    //TODO тоже переводить
                     inputEditText.clearFocus();
                     try {
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -254,6 +256,8 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
+                    translateText(inputEditText.getText().toString());
 
                     return true;
                 }
@@ -272,8 +276,8 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                 }
 
                 // Прописываем то, что надо выполнить после изменения текста
-                //TODO добавить кэш и ошибки исправить
-                final String inputText = inputEditText.getText().toString();
+                //убираем лишние пробелы проблемы
+                final String inputText = inputEditText.getText().toString().trim();
 
                 if (inputText.equals("")) {
                     clearTranslation();
@@ -282,11 +286,14 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                 }
 
                 //определяем исходный язык
-                TranslationManager.detect(getActivity(), inputText, Preferences.get(Preferences.input_lang, getActivity()), new CallBack<String>() {
+                TranslationManager.detect(getActivity(), inputText, Preferences.get(Preferences.input_lang,
+                        getActivity()), new CallBack<String>() {
                     @Override
                     public void onSuccess(String lang) {
-                        //если язык тот же, то просто переводим
-                        if (lang.equals(Preferences.get(Preferences.input_lang, getActivity()))) {
+                        //если не удалось определить язык или
+                        //язык тот же, то просто переводим
+                        if (CommonFunctions.StringIsNullOrEmpty(lang) ||
+                                lang.equals(Preferences.get(Preferences.input_lang, getActivity()))) {
                             translateText(inputText);
                             return;
                         }
@@ -343,20 +350,24 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
         }
     }
 
-    public static final int DISABLED_FAVORITE = R.color.colorGray7;
-    public static final int ACTIVE_FAVORITE =  R.color.colorPrimary;
 
+    /**
+     * метод для проверки состояния кнопки Избранное
+     * @return - в избранном или нет
+     */
     private boolean checkFavorite() {
         return (boolean)favoriteButton.getTag();
     }
 
+    /**
+     * метод для очистки превода
+     */
     private void clearTranslation() {
         resultTextView.setText("");
 
         updateFavoriteButton(false);
         translationLayout.setVisibility(View.GONE);
     }
-
 
     /**
      * показ ошибки
@@ -372,6 +383,10 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
     }
 
 
+    /**
+     * добавляет/удаляет из Избранного
+     * @param isFavorite - избранное
+     */
     private void updateFavoriteButton(boolean isFavorite) {
         if(isFavorite) {
             favoriteButton.setColorFilter(ContextCompat.getColor(getActivity(), ACTIVE_FAVORITE));
@@ -380,6 +395,11 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
             favoriteButton.setColorFilter(ContextCompat.getColor(getActivity(), DISABLED_FAVORITE));
             favoriteButton.setTag(false);
         }
+
+        //обновляем кэш, когда перевод добавляется/удаляется из Избранного
+        Translation translation = getCurrentTranslation();
+        translation.setFavorite(checkFavorite());
+        chache.update(translation);
     }
 
     /**
@@ -483,19 +503,12 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                     inputEditText.setText(resultTextView.getText().toString().trim());
 
                     try {
-                        inputEditText.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                inputEditText.setSelection(resultTextView.getText().toString().trim().length());
-                            }
-                        });
+                        inputEditText.setSelection(resultTextView.getText().toString().trim().length());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-                    if(!CommonFunctions.StringIsNullOrEmpty(inputEditText.getText().toString())) {
-                        translateText(inputText);
-                    }
+                    translateText(inputEditText.getText().toString());
                 }
             });
         }
@@ -558,6 +571,18 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
         }
         hideError();
 
+        final Translation translation = new Translation(getActivity());
+        translation.setInputText(inputText);
+        translation.setInputLang(Preferences.get(Preferences.input_lang, getActivity()));
+        translation.setTranslationLang(Preferences.get(Preferences.translation_lang, getActivity()));
+
+
+        //ищем перевод в кэше
+        Translation translationInChache = chache.findInChache(translation);
+        if(translationInChache != null) {
+            setTranslation(translationInChache);
+            return;
+        }
 
         //нет соединения с Интернетом
         if(!Server.isOnline(getActivity())) {
@@ -566,10 +591,6 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
             return;
         }
 
-        final Translation translation = new Translation(getActivity());
-        translation.setInputText(inputText);
-        translation.setInputLang(Preferences.get(Preferences.input_lang, getActivity()));
-        translation.setTranslationLang(Preferences.get(Preferences.translation_lang, getActivity()));
 
         TranslationManager.translate(getActivity(), translation, new CallBack<Translation>() {
             @Override
@@ -582,7 +603,9 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
 
                 setTranslation(result);
 
-                lookupInDictionary(translation);
+                //добавляем перевод в кэш
+                chache.add(result);
+                //lookupInDictionary(translation);
             }
 
             @Override
@@ -595,6 +618,9 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
             }
         });
     }
+
+
+
 
 
     private void lookupInDictionary(Translation translation) {
@@ -620,6 +646,10 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
     }
 
 
+    /**
+     * открытие перевода с других страниц
+     * @param translation - перевод
+     */
     @Override
     public void showTranslation(Translation translation) {
         showTranslation = true;

@@ -1,6 +1,7 @@
 package com.translator.navigation;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.loopj.android.http.RequestParams;
 import com.translator.R;
@@ -56,7 +57,6 @@ public class TranslationManager {
 
                         translation.setTranslationText(listToStr(result).trim());
 
-                        //TODO
                         translation.setFavorite(new TranslationDBInterface(context).checkFavorite(translation));
 
                         if(result != null) {
@@ -113,7 +113,7 @@ public class TranslationManager {
     }
 
 
-    public static void detect(final Context context, String inputText, String hint,
+    public static void detect(final Context context, final String inputText, String hint,
                               final CallBack callBack) {
 
         String method = context.getResources().getString(R.string.api_detect);
@@ -143,6 +143,7 @@ public class TranslationManager {
                     if (CommonFunctions.getFieldInt(response,
                             context.getString(R.string.par_code)) == 200) {
                         String result = response.getString(context.getString(R.string.par_lang));
+
                         if (result != null) {
                             callBack.onSuccess(result);
                         }

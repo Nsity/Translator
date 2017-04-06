@@ -1,4 +1,4 @@
-package com.translator.navigation.favorites;
+package com.translator.navigation.translation.favorites;
 
 import com.translator.navigation.Translation;
 

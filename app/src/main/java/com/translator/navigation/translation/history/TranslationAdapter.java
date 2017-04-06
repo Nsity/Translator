@@ -1,7 +1,6 @@
-package com.translator.navigation.history;
+package com.translator.navigation.translation.history;
 
 import android.content.Context;
-import android.media.Image;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +11,6 @@ import android.widget.TextView;
 
 import com.translator.R;
 import com.translator.navigation.Translation;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Locale;

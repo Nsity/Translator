@@ -18,8 +18,8 @@ import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 
 import com.translator.R;
-import com.translator.navigation.favorites.OnChangedFragmentInterface;
-import com.translator.navigation.favorites.OnShowTranslationInterface;
+import com.translator.navigation.translation.favorites.OnChangedFragmentInterface;
+import com.translator.navigation.translation.favorites.OnShowTranslationInterface;
 
 public class MainActivity extends AppCompatActivity implements OnChangedFragmentInterface {
 
@@ -70,30 +70,10 @@ public class MainActivity extends AppCompatActivity implements OnChangedFragment
 
         rootView = (CoordinatorLayout) findViewById(R.id.root_view);
 
-        checkKeyBoardUp();
-
+        checkKeyboardUp();
 
 
         translateLayout = (RelativeLayout) findViewById(R.id.translate_layout);
-
-        /*TranslationManager.getLanguages(getApplicationContext(), null, new CallBack() {
-            @Override
-            public void onSuccess() {
-            }
-
-            @Override
-            public void onFail(String message) {
-            }
-        });*/
-
-
-
-
-     /*   fragmentManager = getSupportFragmentManager();
-        translateFragment = new TranslateFragment();
-        historyFragment = new HistoryFragment();
-        favoritesFragment = new FavoritesFragment();
-        settingsFragment = new SettingsFragment();*/
 
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 
@@ -229,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements OnChangedFragment
     /**
      * Метод, который скрывает bottomNavigationView, когда на экране есть клавиатура
      */
-    public void checkKeyBoardUp(){
+    public void checkKeyboardUp(){
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -237,13 +217,19 @@ public class MainActivity extends AppCompatActivity implements OnChangedFragment
                 rootView.getWindowVisibleDisplayFrame(r);
                 int heightDiff = rootView.getRootView().getHeight() - (r.bottom - r.top);
 
-                if (heightDiff > 100) { // if more than 100 pixels, its probably a keyboard...
+                if (heightDiff > 200) { // if more than 200 pixels, its probably a keyboard...
                     //ok now we know the keyboard is up...
                     bottomNavigationView.setVisibility(View.GONE);
 
-                }else{
+                } else {
                     //ok now we know the keyboard is down...
-                    bottomNavigationView.setVisibility(View.VISIBLE);
+                    bottomNavigationView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            bottomNavigationView.setVisibility(View.VISIBLE);
+                        }
+                    });
+                    //bottomNavigationView.setVisibility(View.VISIBLE);
                 }
             }
         });

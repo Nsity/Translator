@@ -50,7 +50,14 @@ public class TranslationDBInterface extends ADBWorker {
 
         Cursor cursor = getCursor(selectQuery, new String[]{translation.getInputText(), translation.getInputLang(), translation.getTranslationText(), translation.getTranslationLang()});
 
-        return cursor != null && cursor.getCount() > 0;
+        boolean result = cursor != null && cursor.getCount() > 0;
+
+        if (cursor != null) {
+            cursor.close();
+        }
+        closeDB();
+
+        return result;
     }
 
 

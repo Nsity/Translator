@@ -1,9 +1,8 @@
-package com.translator.navigation.favorites;
+package com.translator.navigation.translation.history;
 
 import android.content.Context;
 import android.database.Cursor;
 
-import com.translator.navigation.Translation;
 import com.translator.navigation.Translations;
 import com.translator.system.CommonFunctions;
 
@@ -11,29 +10,28 @@ import com.translator.system.CommonFunctions;
  * Created by nsity on 29.03.17.
  */
 
-public class Favorite extends Translations {
+public class History extends Translations {
 
 
-    public Favorite(Context context) {
+    public History(Context context) {
         super(context);
     }
 
     @Override
-    protected void loadFromDB() {
-        Cursor cursor = db.getFavorite();
+    public void loadFromDB() {
+        Cursor cursor = db.getHistory();
         setTranslations(cursor);
-
     }
 
     @Override
-    protected void delete() {
-        db.deleteFavorite();
+    public void delete() {
+        db.deleteHistory();
         loadFromDB();
     }
 
     @Override
     protected void deleteItem(int i) {
-        db.deleteFavoriteItem(arrayList.get(i).getId());
+        db.deleteHistoryItem(arrayList.get(i).getId());
         loadFromDB();
     }
 
@@ -41,9 +39,9 @@ public class Favorite extends Translations {
     protected void search(String query) {
         Cursor cursor;
         if(CommonFunctions.StringIsNullOrEmpty(query)) {
-            cursor = db.getFavorite();
+            cursor = db.getHistory();
         } else {
-            cursor = db.searchInFavorite(query);
+            cursor = db.searchInHistory(query);
         }
         setTranslations(cursor);
     }

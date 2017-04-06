@@ -1,4 +1,4 @@
-package com.translator.navigation.translation;
+package com.translator.navigation.translate;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -14,7 +14,6 @@ import com.translator.R;
 import com.translator.system.Language;
 
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 /**
  * Created by nsity on 22.03.17.
