@@ -18,8 +18,8 @@ import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 
 import com.translator.R;
-import com.translator.navigation.translation.favorites.OnChangedFragmentInterface;
-import com.translator.navigation.translation.favorites.OnShowTranslationInterface;
+import com.translator.navigation.translation.OnChangedFragmentInterface;
+import com.translator.navigation.translation.OnShowTranslationInterface;
 
 public class MainActivity extends AppCompatActivity implements OnChangedFragmentInterface {
 

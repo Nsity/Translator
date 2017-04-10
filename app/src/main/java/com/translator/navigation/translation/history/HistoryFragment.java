@@ -10,7 +10,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 
 import com.translator.R;
-import com.translator.navigation.translation.favorites.TranslationFragment;
+import com.translator.navigation.translation.TranslationAdapter;
+import com.translator.navigation.translation.TranslationFragment;
 
 import java.util.ArrayList;
 

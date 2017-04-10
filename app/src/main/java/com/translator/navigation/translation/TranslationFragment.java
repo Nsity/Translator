@@ -1,4 +1,4 @@
-package com.translator.navigation.translation.favorites;
+package com.translator.navigation.translation;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -27,7 +27,6 @@ import android.widget.TextView;
 
 import com.translator.R;
 import com.translator.navigation.Translation;
-import com.translator.navigation.translation.history.TranslationAdapter;
 import com.translator.system.CommonFunctions;
 
 import java.util.ArrayList;

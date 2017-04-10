@@ -2,6 +2,7 @@ package com.translator.system;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 /**
  * Created by nsity on 21.03.17.
@@ -14,6 +15,7 @@ public class Preferences {
     public static final String translation_lang = "translation_lang";
     private static final String accountType = "com.translator";
     public static final String ui_lang = "ui_lang";
+    public static final String last_translation = "input_lang";
 
 
     private static SharedPreferences sPref;
@@ -21,6 +23,8 @@ public class Preferences {
     public static void set(String fieldName, String value, Context context){
         if (sPref == null)
             sPref = context.getSharedPreferences(accountType, Context.MODE_PRIVATE);
+
+        Log.i("TAG", value);
 
         sPref.edit().putString(fieldName, value).apply();
     }

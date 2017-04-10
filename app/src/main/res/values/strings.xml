@@ -58,4 +58,13 @@
     <string name="try_again_later">Повторите попытку позже</string>
     <string name="try_again">Повторить</string>
     <string name="browser">Браузер</string>
+    <string name="too_long_text">Текст слишком длинный. Будут переведены первые 2000 знаков</string>
+    <string name="par_def">def</string>
+    <string name="par_pos">pos</string>
+    <string name="par_num">num</string>
+    <string name="par_gen">gen</string>
+    <string name="par_tr">tr</string>
+    <string name="par_sun">sun</string>
+    <string name="par_mean">mean</string>
+    <string name="par_ex">ex</string>
 </resources>
