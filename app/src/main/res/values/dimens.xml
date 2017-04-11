@@ -14,23 +14,4 @@
 
     <dimen name="space_progressBar_vertical">32dp</dimen>
 
-    <dimen name="space_componentDictHorizontal_double">16dp</dimen>
-    <dimen name="space_componentDiciHorizontal_triple">48dp</dimen>
-
-    <dimen name="space_swipeLangButton_padding">4dp</dimen>
-
-    <dimen name="space_textViewLettersCount_padding">24dp</dimen>
-
-    <dimen name="elevation_fragmentTranslate_appBar">4dp</dimen>
-
-    <dimen name="textsize_headline">24sp</dimen>
-    <dimen name="textsize_title">20sp</dimen>
-    <dimen name="textsize_subheading">16sp</dimen>
-    <dimen name="textsize_body">14sp</dimen>
-
-    <dimen name="height_recyclerHistory">72dp</dimen>
-
-    <dimen name="height_spinnerLang">48dp</dimen>
-
-    <dimen name="height_divider">1dp</dimen>
 </resources>

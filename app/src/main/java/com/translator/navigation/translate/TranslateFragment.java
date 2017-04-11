@@ -13,10 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
-import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -33,14 +30,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.translator.R;
-import com.translator.navigation.translate.dictionary.Def;
 import com.translator.navigation.translate.dictionary.DictionaryConstructor;
 import com.translator.navigation.translate.dictionary.DictionaryManager;
 import com.translator.navigation.Translation;
 import com.translator.navigation.TranslationManager;
-import com.translator.navigation.translate.dictionary.LookupResponse;
 import com.translator.navigation.translate.dictionary.TranslateFullResponse;
-import com.translator.navigation.translate.dictionary.Word;
 import com.translator.navigation.translation.OnShowTranslationInterface;
 import com.translator.system.CommonFunctions;
 import com.translator.system.Preferences;
@@ -48,12 +42,6 @@ import com.translator.system.Snackbar;
 import com.translator.system.database.TranslationDBInterface;
 import com.translator.system.network.CallBack;
 import com.translator.system.network.Server;
-
-import java.util.ArrayList;
-
-import static android.graphics.Typeface.BOLD;
-import static android.graphics.Typeface.ITALIC;
-import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
 /**
  * Created by nsity on 18.03.17.
@@ -658,11 +646,11 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
         translation.setTranslationLang(Preferences.get(Preferences.translation_lang, getActivity()));
 
         //ищем перевод в кэше
-        Translation translationInChache = chache.findInChache(translation);
+       /* Translation translationInChache = chache.findInChache(translation);
         if(translationInChache != null) {
             setTranslation(translationInChache);
             return;
-        }
+        }*/
 
         //нет соединения с Интернетом
         if(!Server.isOnline(getActivity())) {

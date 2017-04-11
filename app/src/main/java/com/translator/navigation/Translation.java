@@ -1,10 +1,7 @@
 package com.translator.navigation;
 
-import android.content.ContentValues;
 import android.content.Context;
 
-import com.translator.navigation.translate.dictionary.JsonUtils;
-import com.translator.navigation.translate.dictionary.LookupResponse;
 import com.translator.system.database.TranslationDBInterface;
 
 import java.io.Serializable;
@@ -109,19 +106,4 @@ public class Translation implements Serializable {
 
 
     private String dictionaryResponse;
-    private LookupResponse lookupResponse;
-
-    public LookupResponse getLookupResponse() {
-        if (lookupResponse == null) {
-            if (dictionaryResponse != null) {
-                lookupResponse = JsonUtils.deserialize(LookupResponse.class, dictionaryResponse);
-            }
-        }
-
-        return lookupResponse;
-    }
-
-    public void setDictionaryResponse(String dictionaryResponse) {
-        this.dictionaryResponse = dictionaryResponse;
-    }
 }

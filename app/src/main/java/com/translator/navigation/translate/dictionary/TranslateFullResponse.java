@@ -1,5 +1,7 @@
 package com.translator.navigation.translate.dictionary;
 
+import com.translator.navigation.translate.dictionary.dictResult.Def;
+
 import java.util.List;
 
 /**
@@ -7,6 +9,13 @@ import java.util.List;
  */
 
 public class TranslateFullResponse {
-    public List<Def> def = null;
+    private List<Def> def = null;
 
+    public List<Def> getDef() {
+        return def;
+    }
+
+    public void setDef(List<Def> def) {
+        this.def = def;
+    }
 }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/space_componentDictHorizontal_double"
-    android:textColor="@color/green_color_8"
     android:textSize="18sp"
-    tools:text="take some time — занять некоторое время"/>
+    android:textColor="@color/colorGray7"
+    android:paddingLeft="16dp"
+    tools:text="(all, your, base, are, be)"/>

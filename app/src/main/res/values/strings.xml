@@ -37,7 +37,7 @@
     <string name="language_text">Язык текста</string>
     <string name="par_ui">ui</string>
     <string name="language_translation">Язык перевода</string>
-    <string name="translate_with_yandex">Переведено сервисом «Яндекс.Переводчик»</string>
+    <string name="translate_with_yandex">Переведено с помощью сервисов «Яндекс.Переводчик» и «Яндекс.Словарь»</string>
     <string name="yandex">Яндекс</string>
     <string name="par_hint">hint</string>
     <string name="ok">ОК</string>
@@ -68,4 +68,5 @@
     <string name="par_mean">mean</string>
     <string name="par_ex">ex</string>
     <string name="par_anm">anm</string>
+    <string name="par_ts">ts</string>
 </resources>
