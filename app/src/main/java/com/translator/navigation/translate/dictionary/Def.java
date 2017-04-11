@@ -1,6 +1,7 @@
 package com.translator.navigation.translate.dictionary;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by nsity on 10.04.17.
@@ -8,7 +9,14 @@ import java.util.ArrayList;
 
 public class Def {
 
-    private Word word;
+    public String text;
+    public String pos;
+    public String gen;
+    public String num;
+    public String anm;
+    public ArrayList<Tr> tr = null;
+
+   /* private Word word;
 
     private ArrayList<Word> trArray;
     private ArrayList<Word> sunArray;
@@ -54,5 +62,5 @@ public class Def {
 
     public void setWord(Word word) {
         this.word = word;
-    }
+    }*/
 }

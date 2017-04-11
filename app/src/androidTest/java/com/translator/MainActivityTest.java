@@ -54,7 +54,7 @@ public class MainActivityTest {
         //onView(withId(R.id.result_text)).check(withEffectiveVisibility(ViewMatchers.Visibility.GONE));
     }*/
 
-    @Test
+   /* @Test
     public void validateInputLangChooser() {
         onView(withId(R.id.input_lang)).perform(click());
         onData(withItemValue("Азербайджанский")).inAdapterView(withId(R.id.languages_list_view)).perform(click());
@@ -100,6 +100,6 @@ public class MainActivityTest {
                 return item.getItemData().isChecked() == isChecked;
             }
         };
-    }
+    }*/
 
 }

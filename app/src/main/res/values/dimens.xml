@@ -14,7 +14,7 @@
 
     <dimen name="space_progressBar_vertical">32dp</dimen>
 
-    <dimen name="space_componentDictHorizontal_double">32dp</dimen>
+    <dimen name="space_componentDictHorizontal_double">16dp</dimen>
     <dimen name="space_componentDiciHorizontal_triple">48dp</dimen>
 
     <dimen name="space_swipeLangButton_padding">4dp</dimen>

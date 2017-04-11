@@ -64,7 +64,8 @@
     <string name="par_num">num</string>
     <string name="par_gen">gen</string>
     <string name="par_tr">tr</string>
-    <string name="par_sun">sun</string>
+    <string name="par_syn">syn</string>
     <string name="par_mean">mean</string>
     <string name="par_ex">ex</string>
+    <string name="par_anm">anm</string>
 </resources>

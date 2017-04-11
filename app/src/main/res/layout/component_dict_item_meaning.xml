@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:textSize="18sp"
     android:paddingLeft="@dimen/space_componentDiciHorizontal_triple"
     android:paddingRight="@dimen/space_all_screenPadding"
     tools:text="(all, your, base, are, be)"/>

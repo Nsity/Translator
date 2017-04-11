@@ -39,6 +39,7 @@ import com.translator.navigation.translate.dictionary.DictionaryManager;
 import com.translator.navigation.Translation;
 import com.translator.navigation.TranslationManager;
 import com.translator.navigation.translate.dictionary.LookupResponse;
+import com.translator.navigation.translate.dictionary.TranslateFullResponse;
 import com.translator.navigation.translate.dictionary.Word;
 import com.translator.navigation.translation.OnShowTranslationInterface;
 import com.translator.system.CommonFunctions;
@@ -712,12 +713,10 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
             return;
         }
 
-        DictionaryManager.lookup(getActivity(), translation, new CallBack<Translation>() {
+        DictionaryManager.lookup(getActivity(), translation, new CallBack<TranslateFullResponse>() {
             @Override
-            public void onSuccess(Translation result) {
-
-                final LookupResponse lookupResponse = result.getLookupResponse();
-                if(lookupResponse != null) {
+            public void onSuccess(TranslateFullResponse result) {
+                if(result != null) {
                     //textViewDict.setText(DictionaryConstructor.formatDefinition(lookupResponse));
 
                     dictLayout.removeAllViews();
@@ -725,7 +724,7 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                     //textViewDict.setVisibility(View.VISIBLE);
                    // containerDictResult.setVisibility(View.VISIBLE);
 
-                    DictionaryConstructor.makeLookupResponse(getContext(), dictLayout, lookupResponse);
+                    DictionaryConstructor.makeLookupResponse(getContext(), dictLayout, result);
                 }
 
             }
