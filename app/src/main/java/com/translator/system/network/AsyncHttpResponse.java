@@ -127,6 +127,12 @@ public class AsyncHttpResponse {
             }
 
             @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                response = (response == null) ? new JSONArray() : response;
+                callBack.onSuccess(new ResponseObject(statusCode, headers, response));
+            }
+
+            @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 errorResponse = (errorResponse == null) ? new JSONObject() : errorResponse;
 

@@ -45,7 +45,7 @@ public class Chache implements Serializable {
 
 
     public void update(Translation translation) {
-        for (int i=0; i < arrayList.size();i++) {
+        for (int i = 0; i < arrayList.size(); i++) {
             Translation translationInChache = arrayList.get(i);
 
             if(translation.getInputLang().equals(translationInChache.getInputLang()) &&

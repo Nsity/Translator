@@ -19,7 +19,7 @@ public class Translation implements Serializable {
     private String translationText;
     private String inputLang;
     private String translationLang;
-    private TranslateFullResponse fullTranslation;
+   // private TranslateFullResponse fullTranslation;
     private boolean inHistory;
 
 
@@ -79,13 +79,13 @@ public class Translation implements Serializable {
         this.translationLang = translationLang;
     }
 
-    public TranslateFullResponse getFullTranslation() {
+ /*   public TranslateFullResponse getFullTranslation() {
         return fullTranslation;
     }
 
     public void setFullTranslation(TranslateFullResponse fullTranslation) {
         this.fullTranslation = fullTranslation;
-    }
+    }*/
 
     public boolean isInHistory() {
         return inHistory;

@@ -3,6 +3,7 @@ package com.translator.navigation.translate;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ import com.translator.navigation.translate.dictionary.DictionaryConstructor;
 import com.translator.navigation.translate.dictionary.DictionaryManager;
 import com.translator.navigation.Translation;
 import com.translator.navigation.TranslationManager;
+import com.translator.navigation.translate.dictionary.DictionaryPairs;
 import com.translator.navigation.translate.dictionary.TranslateFullResponse;
 import com.translator.navigation.translation.OnShowTranslationInterface;
 import com.translator.system.CommonFunctions;
@@ -51,7 +53,7 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
 
     private CutCopyPasteEditText inputEditText;
     private TextView resultTextView, errorTextView, errorDescriptionTextView, inputLangTextView,
-            translationLangTextView, dictionaryTextView;
+            translationLangTextView;
     private ImageButton switchImageButton;
 
     public static final int LANG_REQUEST_CODE = 2;
@@ -72,12 +74,10 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
     public static final int ACTIVE_FAVORITE =  R.color.colorPrimary;
 
 
+    private DictionaryPairs dictionaryPairs = null;
+
     //TODO
-    //пустой JSON - нет интернета??
-    //загрузка языков словаря
-    //переключатель нет дает переключиться несколько раз
-    //смена языка интерфейса
-    //если нет интернета - плохое поведение
+    //кнопка избранное сломалась!!!
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -145,7 +145,7 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
             public void onClick(View view) {
                 //если поле не пустое
                 if(CommonFunctions.StringIsNullOrEmpty(inputEditText.getText().toString()) ||
-                        CommonFunctions.StringIsNullOrEmpty(resultTextView.getText().toString())) {
+                        CommonFunctions.StringIsNullOrEmpty(resultTextView.getText().toString()) || !Server.isOnline(getActivity())) {
                     return;
                 }
                 updateFavoriteButton(!checkFavorite());
@@ -156,6 +156,8 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                 translation.setInHistory(true);
 
                 translation.save();
+
+                chache.update(translation);
 
             }
         });
@@ -254,7 +256,7 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
 
                     //если поле не пустое
                     if(CommonFunctions.StringIsNullOrEmpty(inputEditText.getText().toString()) ||
-                            CommonFunctions.StringIsNullOrEmpty(resultTextView.getText().toString())) {
+                            CommonFunctions.StringIsNullOrEmpty(resultTextView.getText().toString()) || !Server.isOnline(getActivity())) {
                         return;
                     }
                     //сохраняем перевод в историю
@@ -308,6 +310,13 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                 if (inputText.equals("")) {
                     clearTranslation();
                     Server.getHttpClient().cancelRequests(getActivity(), true);
+                    return;
+                }
+
+
+                if(!Server.isOnline(getActivity())) {
+                    clearTranslation();
+                    showError(getString(R.string.connection_error), getString(R.string.check_internet_connection_and_try_again));
                     return;
                 }
 
@@ -401,11 +410,16 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                     CommonFunctions.StringIsNullOrEmpty(resultTextView.getText().toString())) {
                 return;
             }
+
+
             //если добавили/убрали из избранного
-            updateFavoriteButton(new TranslationDBInterface(getActivity()).checkFavorite(getCurrentTranslation()));
-        } else {
-            //String inputText = inputEditText.getText().toString();
-            //Preferences.set(Preferences.last_translation, inputText, getActivity());
+            if(!showTranslation) {
+                //TODO
+                //updateFavoriteButton(new TranslationDBInterface(getActivity()).checkFavorite(getCurrentTranslation()));
+            }
+
+           // Translation translation = getCurrentTranslation();
+           // chache.update(translation);
         }
     }
 
@@ -447,18 +461,17 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
      * @param isFavorite - избранное
      */
     private void updateFavoriteButton(boolean isFavorite) {
-        if(isFavorite) {
-            favoriteButton.setColorFilter(ContextCompat.getColor(getActivity(), ACTIVE_FAVORITE));
-            favoriteButton.setTag(true);
-        } else {
-            favoriteButton.setColorFilter(ContextCompat.getColor(getActivity(), DISABLED_FAVORITE));
-            favoriteButton.setTag(false);
+        try {
+            if (isFavorite) {
+                favoriteButton.setColorFilter(ContextCompat.getColor(getContext(), ACTIVE_FAVORITE));
+                favoriteButton.setTag(true);
+            } else {
+                favoriteButton.setColorFilter(ContextCompat.getColor(getContext(), DISABLED_FAVORITE));
+                favoriteButton.setTag(false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        //обновляем кэш, когда перевод добавляется/удаляется из Избранного
-        Translation translation = getCurrentTranslation();
-        translation.setFavorite(checkFavorite());
-        chache.update(translation);
     }
 
     /**
@@ -566,6 +579,10 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                 public void onClick(View view) {
                     switchLanguages();
 
+                    if(!Server.isOnline(getActivity())) {
+                        return;
+                    }
+
                     String inputText = inputEditText.getText().toString().trim();
                     inputEditText.setText(resultTextView.getText().toString().trim());
 
@@ -575,7 +592,7 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                         e.printStackTrace();
                     }
 
-                    translateText(inputEditText.getText().toString());
+                    //translateText(inputEditText.getText().toString());
                 }
             });
         }
@@ -642,7 +659,7 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
 
         updateFavoriteButton(translation.isFavorite());
 
-        setDictionaryTranslation(translation);
+        lookupInDictionary(translation);
     }
 
 
@@ -656,6 +673,13 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
         }
         hideError();
 
+        //нет соединения с Интернетом
+        if(!Server.isOnline(getActivity())) {
+            clearTranslation();
+            showError(getString(R.string.connection_error), getString(R.string.check_internet_connection_and_try_again));
+            return;
+        }
+
         final Translation translation = new Translation(getActivity());
         translation.setInputText(inputText);
         translation.setInputLang(Preferences.get(Preferences.input_lang, getActivity()));
@@ -665,13 +689,6 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
         Translation translationInChache = chache.findInChache(translation);
         if(translationInChache != null) {
             setTranslation(translationInChache);
-            return;
-        }
-
-        //нет соединения с Интернетом
-        if(!Server.isOnline(getActivity())) {
-            clearTranslation();
-            showError(getString(R.string.connection_error), getString(R.string.check_internet_connection_and_try_again));
             return;
         }
 
@@ -688,7 +705,7 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                 //добавляем перевод в кэш
                 chache.add(translation);
 
-                lookupInDictionary(translation);
+
             }
 
             @Override
@@ -704,16 +721,26 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
     }
 
 
-
-    private void setDictionaryTranslation(Translation translation) {
-        if(translation.getFullTranslation() != null) {
-            dictLayout.removeAllViews();
-            DictionaryConstructor.makeLookupResponse(getContext(), dictLayout, translation.getFullTranslation());
+    /**
+     * метод для формирования словарной статьи
+     * @param response - ответ
+     */
+    private void setDictionaryTranslation(TranslateFullResponse response) {
+        dictLayout.removeAllViews();
+        try {
+            if (response != null) {
+                DictionaryConstructor.makeLookupResponse(getContext(), dictLayout, response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
 
-
+    /**
+     * метод для получения словарной статьи
+     * @param translation - перевод
+     */
     private void lookupInDictionary(final Translation translation) {
         dictLayout.removeAllViews();
 
@@ -721,19 +748,42 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
 
         //нет соединения с Интернетом
         if(!Server.isOnline(getActivity())) {
-            clearTranslation();
-            showError(getString(R.string.connection_error), getString(R.string.check_internet_connection_and_try_again));
             return;
         }
 
-        DictionaryManager.lookup(getActivity(), translation, new CallBack<Translation>() {
+        if(dictionaryPairs == null) {
+            dictionaryPairs = new DictionaryPairs(getActivity());
+        }
+
+        if(dictionaryPairs.getPairs().size() == 0) {
+            DictionaryManager.getLangs(getActivity(), new CallBack(){
+                @Override
+                public void onSuccess() {
+                    dictionaryPairs.loadFromDB();
+
+                    if(dictionaryPairs.findPair(translation.getInputLang(), translation.getTranslationLang())) {
+                        lookup(translation);
+                    }
+                }
+            });
+
+            return;
+        }
+
+        if(dictionaryPairs.findPair(translation.getInputLang(), translation.getTranslationLang())) {
+            lookup(translation);
+        }
+    }
+
+
+    private void lookup(final Translation translation) {
+        Log.i("TAG", "lookup");
+        DictionaryManager.lookup(getActivity(), translation, new CallBack<TranslateFullResponse>() {
             @Override
-            public void onSuccess(Translation result) {
+            public void onSuccess(TranslateFullResponse result) {
                 if(inputEditText.getText().toString().equals(translation.getInputText())) {
                     setDictionaryTranslation(result);
                 }
-
-                chache.update(result);
             }
 
             @Override
@@ -742,7 +792,6 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
             }
         });
     }
-
 
 
     /**
@@ -755,6 +804,8 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
 
         translationLayout.setVisibility(View.VISIBLE);
 
+        updateFavoriteButton(translation.isFavorite());
+
         resultTextView.post(new Runnable() {
             public void run() {
                 resultTextView.setText(translation.getTranslationText());
@@ -766,16 +817,7 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
         setTranslationLang(translation.getTranslationLang());
         setInputLang(translation.getInputLang());
 
-        updateFavoriteButton(translation.isFavorite());
-
-
-        //ищем перевод в кэше
-        Translation translationInChache = chache.findInChache(translation);
-        if(translationInChache != null && translationInChache.getFullTranslation() != null) {
-            setDictionaryTranslation(translationInChache);
-        } else {
-            lookupInDictionary(translation);
-        }
+        lookupInDictionary(translation);
 
     }
 

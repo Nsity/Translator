@@ -241,6 +241,7 @@ public abstract class ADBWorker {
 
         db.delete(LanguageDBInterface.LANGUAGE_TABLE_NAME, null, null);
         db.delete(TranslationDBInterface.TRANSLATION_TABLE_NAME, null, null);
+        db.delete(DictionaryDBInterface.DICTIONARY_TABLE_NAME, null, null);
 
         db.close();
     }

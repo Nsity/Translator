@@ -22,10 +22,10 @@
             </intent-filter>
         </activity>
 
-
         <activity
             android:name=".navigation.MainActivity"
             android:windowSoftInputMode="adjustResize"
+            android:configChanges="locale|layoutDirection"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 

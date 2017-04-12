@@ -13,6 +13,7 @@ import com.translator.navigation.translate.dictionary.dictResult.Syn;
 import com.translator.navigation.translate.dictionary.dictResult.Tr;
 import com.translator.system.CommonFunctions;
 import com.translator.system.Preferences;
+import com.translator.system.database.DictionaryDBInterface;
 import com.translator.system.network.AsyncHttpResponse;
 import com.translator.system.network.CallBack;
 import com.translator.system.network.ErrorTracker;
@@ -59,9 +60,8 @@ public class DictionaryManager {
                         Log.i("TAG", response.toString());
 
                         TranslateFullResponse translateFullResponse = DictionaryConverter.convert(context, response);
-                        translation.setFullTranslation(translateFullResponse);
 
-                        callBack.onSuccess(translation);
+                        callBack.onSuccess(translateFullResponse);
                     }
 
                     @Override
@@ -73,5 +73,34 @@ public class DictionaryManager {
     }
 
 
+    public static void getLangs(final Context context, final CallBack callBack) {
 
+        String method = context.getResources().getString(R.string.api_get_langs);
+        RequestParams params = new RequestParams();
+        params.put(context.getString(R.string.par_key), context.getString(R.string.yandex_dictionary_api_key));
+
+        String url = context.getString(R.string.yandex_dictionary_http) + method;
+
+        new AsyncHttpResponse(context, url, params, AsyncHttpResponse.CALL_POST_JSON_HTTP_RESPONSE,
+                new CallBack<ResponseObject>() {
+                    @Override
+                    public void onSuccess(ResponseObject object) {
+                        if (!(object.getResponse() instanceof JSONArray)) {
+                            return;
+                        }
+                        JSONArray response = (JSONArray) object.getResponse();
+
+                        DictionaryDBInterface db = new DictionaryDBInterface(context);
+                        db.save(response, true);
+
+                        callBack.onSuccess();
+                    }
+
+                    @Override
+                    public void onFailure(ResponseObject object) {
+                        callBack.onFail(ErrorTracker.getErrorDescription(context, getClass().getName(),
+                                String.valueOf(object.getResponse())));
+                    }
+                });
+    }
 }

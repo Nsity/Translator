@@ -1,6 +1,7 @@
 package com.translator.navigation;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
@@ -11,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -270,6 +272,19 @@ public class MainActivity extends AppCompatActivity implements OnChangedFragment
     protected void onResume() {
         super.onResume();
 
+        /*if(!Locale.getDefault().getLanguage().equals(Preferences.get(Preferences.ui_lang, getApplicationContext()))) {
+            Intent i = new Intent(MainActivity.this, SplashActivity.class);
+            startActivity(i);
+
+            // close this activity
+            finish();
+            overridePendingTransition(0, 0);
+        }*/
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        // если сменили язык, то загружаем новые языки
         if(!Locale.getDefault().getLanguage().equals(Preferences.get(Preferences.ui_lang, getApplicationContext()))) {
             Intent i = new Intent(MainActivity.this, SplashActivity.class);
             startActivity(i);
@@ -278,5 +293,6 @@ public class MainActivity extends AppCompatActivity implements OnChangedFragment
             finish();
             overridePendingTransition(0, 0);
         }
+        super.onConfigurationChanged(newConfig);
     }
 }
