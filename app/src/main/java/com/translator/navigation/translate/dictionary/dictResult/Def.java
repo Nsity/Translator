@@ -15,7 +15,7 @@ public class Def {
     private String ts; //транскрипция
    // public String anm; // одушевленное
 
-    private ArrayList<Tr> transtations = null;
+    private ArrayList<Tr> translations = null;
 
     public String getText() {
         return text;
@@ -49,12 +49,12 @@ public class Def {
         this.num = num;
     }
 
-    public ArrayList<Tr> getTranstations() {
-        return transtations;
+    public ArrayList<Tr> getTranslations() {
+        return translations;
     }
 
-    public void setTranstations(ArrayList<Tr> transtations) {
-        this.transtations = transtations;
+    public void setTranslations(ArrayList<Tr> translations) {
+        this.translations = translations;
     }
 
     public String getTs() {

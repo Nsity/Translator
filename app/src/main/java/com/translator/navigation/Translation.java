@@ -2,6 +2,7 @@ package com.translator.navigation;
 
 import android.content.Context;
 
+import com.translator.navigation.translate.dictionary.TranslateFullResponse;
 import com.translator.system.database.TranslationDBInterface;
 
 import java.io.Serializable;
@@ -18,7 +19,7 @@ public class Translation implements Serializable {
     private String translationText;
     private String inputLang;
     private String translationLang;
-    private String fullTranslation;
+    private TranslateFullResponse fullTranslation;
     private boolean inHistory;
 
 
@@ -78,11 +79,11 @@ public class Translation implements Serializable {
         this.translationLang = translationLang;
     }
 
-    public String getFullTranslation() {
+    public TranslateFullResponse getFullTranslation() {
         return fullTranslation;
     }
 
-    public void setFullTranslation(String fullTranslation) {
+    public void setFullTranslation(TranslateFullResponse fullTranslation) {
         this.fullTranslation = fullTranslation;
     }
 

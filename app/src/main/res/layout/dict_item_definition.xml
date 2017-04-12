@@ -31,13 +31,4 @@
         android:textSize="18sp"
         android:layout_toEndOf="@+id/count" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:id="@+id/meanings"
-        android:layout_below="@+id/synonyms"
-        android:textSize="18sp"
-        android:textColor="@color/meaning_color"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/synonyms" />
-
 </RelativeLayout>

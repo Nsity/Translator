@@ -9,13 +9,13 @@ import java.util.List;
  */
 
 public class TranslateFullResponse {
-    private List<Def> def = null;
+    private List<Def> definitions = null;
 
-    public List<Def> getDef() {
-        return def;
+    public List<Def> getDefinitions() {
+        return definitions;
     }
 
-    public void setDef(List<Def> def) {
-        this.def = def;
+    public void setDefinitions(List<Def> definitions) {
+        this.definitions = definitions;
     }
 }

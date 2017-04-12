@@ -4,13 +4,14 @@ import android.util.Log;
 
 import com.translator.navigation.Translation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by nsity on 07.04.17.
  */
 
-public class Chache {
+public class Chache implements Serializable {
 
     private ArrayList<Translation> arrayList;
 

@@ -1,5 +1,6 @@
 package com.translator.navigation;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
@@ -20,6 +21,10 @@ import android.widget.RelativeLayout;
 import com.translator.R;
 import com.translator.navigation.translation.OnChangedFragmentInterface;
 import com.translator.navigation.translation.OnShowTranslationInterface;
+import com.translator.system.Language;
+import com.translator.system.Preferences;
+
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements OnChangedFragmentInterface {
 
@@ -259,5 +264,19 @@ public class MainActivity extends AppCompatActivity implements OnChangedFragment
         updateNavigationBarState(R.id.action_translate);
 
         onShowTranslationInterface.showTranslation(translation);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(!Locale.getDefault().getLanguage().equals(Preferences.get(Preferences.ui_lang, getApplicationContext()))) {
+            Intent i = new Intent(MainActivity.this, SplashActivity.class);
+            startActivity(i);
+
+            // close this activity
+            finish();
+            overridePendingTransition(0, 0);
+        }
     }
 }

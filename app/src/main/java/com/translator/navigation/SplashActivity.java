@@ -53,6 +53,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
 
+        String ui_lang = Preferences.get(Preferences.ui_lang, getApplicationContext());
 
         Preferences.set(Preferences.ui_lang, Locale.getDefault().getLanguage(), getApplicationContext());
 
@@ -77,6 +78,11 @@ public class SplashActivity extends AppCompatActivity {
         //если нет Интернета и не загружены языки, то показываем ошибку
         if(!Server.isOnline(getApplicationContext()) && langCount == 0) {
             showError(getString(R.string.connection_error), getString(R.string.check_internet_connection_and_try_again));
+            return;
+        }
+
+        if(!Locale.getDefault().getLanguage().equals(ui_lang)) {
+            loadLanguages();
             return;
         }
 

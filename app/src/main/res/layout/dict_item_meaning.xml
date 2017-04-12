@@ -5,6 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textSize="18sp"
-    android:textColor="@color/colorGray7"
+    android:textColor="@color/meaning_color"
     android:paddingLeft="16dp"
     tools:text="(all, your, base, are, be)"/>

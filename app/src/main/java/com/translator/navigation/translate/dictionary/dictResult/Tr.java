@@ -15,9 +15,9 @@ public class Tr {
     private String text;
     private String pos;
     private String gen;
-    public ArrayList<Syn> syn = null;
-    public ArrayList<Mean> mean = null;
-    public ArrayList<Ex> ex = null;
+    private ArrayList<Syn> synonyms = null;
+    private ArrayList<Mean> meanings = null;
+    private ArrayList<Ex> examples = null;
 
     public String getText() {
         return text;
@@ -41,5 +41,29 @@ public class Tr {
 
     public void setGen(String gen) {
         this.gen = gen;
+    }
+
+    public ArrayList<Ex> getExamples() {
+        return examples;
+    }
+
+    public void setExamples(ArrayList<Ex> examples) {
+        this.examples = examples;
+    }
+
+    public ArrayList<Syn> getSynonyms() {
+        return synonyms;
+    }
+
+    public void setSynonyms(ArrayList<Syn> synonyms) {
+        this.synonyms = synonyms;
+    }
+
+    public ArrayList<Mean> getMeanings() {
+        return meanings;
+    }
+
+    public void setMeanings(ArrayList<Mean> meanings) {
+        this.meanings = meanings;
     }
 }
