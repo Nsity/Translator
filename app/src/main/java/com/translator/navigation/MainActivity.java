@@ -12,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,14 +20,14 @@ import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 
 import com.translator.R;
-import com.translator.navigation.translation.OnChangedFragmentInterface;
-import com.translator.navigation.translation.OnShowTranslationInterface;
-import com.translator.system.Language;
+import com.translator.navigation.translation.OnChangedTranslateFragmentListener;
+import com.translator.navigation.translation.OnChangedStateFragmentListener;
+import com.translator.navigation.translation.TranslationFragment;
 import com.translator.system.Preferences;
 
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements OnChangedFragmentInterface {
+public class MainActivity extends AppCompatActivity implements OnChangedTranslateFragmentListener {
 
     private Fragment translateFragment, historyFragment, favoritesFragment, settingsFragment;
     private FragmentManager fragmentManager;
@@ -42,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements OnChangedFragment
     private CoordinatorLayout rootView;
 
 
-    private OnShowTranslationInterface onShowTranslationInterface;
+    private OnChangedStateFragmentListener onChangedStateFragmentListener;
 
 
     private final static int TRANSLATE_ITEM = 0;
@@ -72,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnChangedFragment
         transaction.commit();
 
 
-        onShowTranslationInterface = (OnShowTranslationInterface) fragments[TRANSLATE_ITEM];
+        onChangedStateFragmentListener = (OnChangedStateFragmentListener) fragments[TRANSLATE_ITEM];
 
 
         rootView = (CoordinatorLayout) findViewById(R.id.root_view);
@@ -260,27 +259,6 @@ public class MainActivity extends AppCompatActivity implements OnChangedFragment
         menu.findItem(actionId).setChecked(true);
     }
 
-    @Override
-    public void showFragment(Translation translation) {
-        displayView(R.id.action_translate);
-        updateNavigationBarState(R.id.action_translate);
-
-        onShowTranslationInterface.showTranslation(translation);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        /*if(!Locale.getDefault().getLanguage().equals(Preferences.get(Preferences.ui_lang, getApplicationContext()))) {
-            Intent i = new Intent(MainActivity.this, SplashActivity.class);
-            startActivity(i);
-
-            // close this activity
-            finish();
-            overridePendingTransition(0, 0);
-        }*/
-    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -294,5 +272,23 @@ public class MainActivity extends AppCompatActivity implements OnChangedFragment
             overridePendingTransition(0, 0);
         }
         super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void makeAction(int action, Translation translation) {
+
+        switch (action) {
+            case TranslationFragment.ACTION_SHOW_FRAGMENT:
+                displayView(R.id.action_translate);
+                updateNavigationBarState(R.id.action_translate);
+
+                onChangedStateFragmentListener.updateFragmentState(action, translation);
+                break;
+
+            case TranslationFragment.ACTION_UPDATE_FAVORITE_BUTTON:
+                onChangedStateFragmentListener.updateFragmentState(action, translation);
+                break;
+        }
+
     }
 }

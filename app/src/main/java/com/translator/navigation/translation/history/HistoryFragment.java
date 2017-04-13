@@ -30,7 +30,7 @@ public class HistoryFragment extends TranslationFragment {
         history = new History(getActivity());
 
         arrayList = new ArrayList<>();
-        adapter = new TranslationAdapter(getActivity(), arrayList);
+        adapter = new TranslationAdapter(getActivity(), arrayList, onChangedTranslateFragmentListener);
         listView.setAdapter(adapter);
 
 

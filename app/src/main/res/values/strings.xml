@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Translator</string>
-    <string name="section_format">Hello World from section: %1$d</string>
     <string name="text_favorites">Favorites</string>
     <string name="text_translator">Translator</string>
     <string name="text_history">History</string>

@@ -17,7 +17,7 @@
         android:layout_marginTop="8dp"
         android:layout_below="@+id/definition"
         android:layout_height="wrap_content"
-        android:textColor="@color/green_color_5"
+        android:textColor="@color/green_color_6"
         android:id="@+id/definition_part_of_speech"
         tools:text="существительное"
         android:textStyle="italic"

@@ -24,11 +24,14 @@ public class TranslationAdapter extends BaseAdapter {
     private ArrayList<Translation> arrayList;
     private Context context;
     private LayoutInflater layoutInflater;
+    private OnChangedTranslateFragmentListener onShowTranslationInterface;
 
-    public TranslationAdapter(Context context, ArrayList<Translation> arrayList) {
+    public TranslationAdapter(Context context, ArrayList<Translation> arrayList, OnChangedTranslateFragmentListener onShowTranslationInterface) {
         this.arrayList = arrayList;
         this.layoutInflater = LayoutInflater.from(context);
         this.context = context;
+
+        this.onShowTranslationInterface = onShowTranslationInterface;
     }
 
     public static class ViewHolder {
@@ -87,6 +90,8 @@ public class TranslationAdapter extends BaseAdapter {
                 translation.setFavorite(!translation.isFavorite());
                 setIsFavoriteBackground(holder.isFavoriteImageButton, translation.isFavorite());
                 translation.update();
+
+                onShowTranslationInterface.makeAction(TranslationFragment.ACTION_UPDATE_FAVORITE_BUTTON, translation);
             }
         });
 

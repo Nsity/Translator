@@ -47,8 +47,11 @@ public abstract class TranslationFragment extends Fragment {
 
     protected ImageView noTranslationsImageView;
 
+    public static final int ACTION_SHOW_FRAGMENT = 1;
+    public static final int ACTION_UPDATE_FAVORITE_BUTTON = 2;
 
-    protected OnChangedFragmentInterface onShowTranslationInterface;
+
+    protected OnChangedTranslateFragmentListener onChangedTranslateFragmentListener;
 
     @Nullable
     @Override
@@ -64,7 +67,7 @@ public abstract class TranslationFragment extends Fragment {
         noTranslationsImageView = (ImageView) rootView.findViewById(R.id.no_translations_image_view);
 
 
-        onShowTranslationInterface = (OnChangedFragmentInterface) getActivity();
+        onChangedTranslateFragmentListener = (OnChangedTranslateFragmentListener) getActivity();
 
         setHasOptionsMenu(true);
 
@@ -137,7 +140,7 @@ public abstract class TranslationFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Translation translation = arrayList.get(i);
-                onShowTranslationInterface.showFragment(translation);
+                onChangedTranslateFragmentListener.makeAction(ACTION_SHOW_FRAGMENT, translation);
             }
         });
 

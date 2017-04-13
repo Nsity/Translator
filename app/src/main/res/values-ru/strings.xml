@@ -18,7 +18,6 @@
     <string name="language_translation">Язык перевода</string>
     <string name="translate_with_yandex">Переведено с помощью сервиса «Яндекс.Переводчик»</string>
     <string name="implemented_with_dictionary">Реализовано с помощью сервиса «Яндекс.Словарь»</string>
-    <string name="yandex">Яндекс</string>
     <string name="ok">ОК</string>
     <string name="error_occurred">Произошла ошибка</string>
     <string name="error_tracker_empty_json">Пустой JSON-ответ</string>
@@ -35,4 +34,33 @@
     <string name="try_again">Повторить</string>
     <string name="browser">Браузер</string>
     <string name="too_long_text">Текст слишком длинный. Будут переведены первые 2000 знаков</string>
+
+
+    <string name="yandex_translate_http">https://translate.yandex.net/api/v1.5/tr.json/</string>
+    <string name="yandex_dictionary_http">https://dictionary.yandex.net/api/v1/dicservice.json/</string>
+    <string name="api_translate">translate</string>
+    <string name="api_detect">detect</string>
+    <string name="api_get_langs">getLangs</string>
+    <string name="api_lookup">lookup</string>
+    <string name="par_code">code</string>
+    <string name="yandex_translate_api_key">trnsl.1.1.20170318T153333Z.9e2a34d3abd9dd27.396aec68f7a23e0ab030865f817666cce3ae2cdb</string>
+    <string name="yandex_dictionary_api_key">dict.1.1.20170406T125559Z.12e2e70a589a9cd5.ce2456edd85f5584a5bc7a78f2c05efabaa013f7</string>
+    <string name="par_key">key</string>
+    <string name="par_text">text</string>
+    <string name="par_lang">lang</string>
+    <string name="par_langs">langs</string>
+    <string name="par_format">format</string>
+    <string name="par_options">options</string>
+    <string name="par_ui">ui</string>
+    <string name="par_hint">hint</string>
+    <string name="par_def">def</string>
+    <string name="par_pos">pos</string>
+    <string name="par_num">num</string>
+    <string name="par_gen">gen</string>
+    <string name="par_tr">tr</string>
+    <string name="par_syn">syn</string>
+    <string name="par_mean">mean</string>
+    <string name="par_ex">ex</string>
+    <string name="par_anm">anm</string>
+    <string name="par_ts">ts</string>
 </resources>

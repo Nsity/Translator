@@ -3,7 +3,6 @@ package com.translator.navigation.translate;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,7 +36,8 @@ import com.translator.navigation.Translation;
 import com.translator.navigation.TranslationManager;
 import com.translator.navigation.translate.dictionary.DictionaryPairs;
 import com.translator.navigation.translate.dictionary.TranslateFullResponse;
-import com.translator.navigation.translation.OnShowTranslationInterface;
+import com.translator.navigation.translation.OnChangedStateFragmentListener;
+import com.translator.navigation.translation.TranslationFragment;
 import com.translator.system.CommonFunctions;
 import com.translator.system.Preferences;
 import com.translator.system.Snackbar;
@@ -49,7 +49,7 @@ import com.translator.system.network.Server;
  * Created by nsity on 18.03.17.
  */
 
-public class TranslateFragment extends Fragment implements OnShowTranslationInterface {
+public class TranslateFragment extends Fragment implements OnChangedStateFragmentListener {
 
     private CutCopyPasteEditText inputEditText;
     private TextView resultTextView, errorTextView, errorDescriptionTextView, inputLangTextView,
@@ -109,7 +109,7 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
         errorDescriptionTextView = (TextView) rootView.findViewById(R.id.error_description_text);
         favoriteButton = (ImageButton) rootView.findViewById(R.id.favorite_button);
 
-        progressLayout = (LinearLayout) rootView.findViewById(R.id.progress_layout);
+        //progressLayout = (LinearLayout) rootView.findViewById(R.id.progress_layout);
         dictLayout = (LinearLayout) rootView.findViewById(R.id.dict_layout);
 
 
@@ -173,7 +173,7 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
 
                 hideError();
 
-                translateText(inputEditText.getText().toString());
+                translateText(inputEditText.getText().toString(), true);
             }
         });
 
@@ -254,18 +254,10 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                         e.printStackTrace();
                     }
 
-                    //если поле не пустое
-                    if(CommonFunctions.StringIsNullOrEmpty(inputEditText.getText().toString()) ||
-                            CommonFunctions.StringIsNullOrEmpty(resultTextView.getText().toString()) || !Server.isOnline(getActivity())) {
-                        return;
-                    }
                     //сохраняем перевод в историю
                     Translation translation = getCurrentTranslation();
 
-                    translation.setFavorite(checkFavorite());
-                    translation.setInHistory(true);
-
-                    translation.save();
+                    saveInHistory(translation);
 
                 }
             }
@@ -285,7 +277,7 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                         e.printStackTrace();
                     }
 
-                    translateText(inputEditText.getText().toString());
+                    translateText(inputEditText.getText().toString(), true);
 
                     return true;
                 }
@@ -329,7 +321,7 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                         //язык тот же, то просто переводим
                         if (CommonFunctions.StringIsNullOrEmpty(lang) ||
                                 lang.equals(Preferences.get(Preferences.input_lang, getActivity()))) {
-                            translateText(inputText);
+                            translateText(inputText, false);
                             return;
                         }
 
@@ -339,7 +331,7 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                         }
                         setInputLang(lang);
 
-                        translateText(inputText);
+                        translateText(inputText, false);
                     }
 
                     @Override
@@ -403,24 +395,17 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
     }
 
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        if(!hidden) {
-            if(CommonFunctions.StringIsNullOrEmpty(inputEditText.getText().toString()) ||
-                    CommonFunctions.StringIsNullOrEmpty(resultTextView.getText().toString())) {
-                return;
-            }
-
-
-            //если добавили/убрали из избранного
-            if(!showTranslation) {
-                //TODO
-                //updateFavoriteButton(new TranslationDBInterface(getActivity()).checkFavorite(getCurrentTranslation()));
-            }
-
-           // Translation translation = getCurrentTranslation();
-           // chache.update(translation);
+    private void saveInHistory(Translation translation) {
+        //если поле не пустое
+        if (CommonFunctions.StringIsNullOrEmpty(inputEditText.getText().toString()) ||
+                CommonFunctions.StringIsNullOrEmpty(resultTextView.getText().toString()) || !Server.isOnline(getActivity())) {
+            return;
         }
+
+        translation.setFavorite(checkFavorite());
+        translation.setInHistory(true);
+
+        translation.save();
     }
 
     /**
@@ -526,7 +511,7 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                 }
 
                 //переводим текст
-                translateText(inputEditText.getText().toString());
+                translateText(inputEditText.getText().toString(), true);
 
 
             }
@@ -592,7 +577,7 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                         e.printStackTrace();
                     }
 
-                    //translateText(inputEditText.getText().toString());
+                    translateText(inputEditText.getText().toString(), true);
                 }
             });
         }
@@ -619,17 +604,11 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
     }
 
     private void switchLanguages() {
-       // String inputLangDisplay = inputLangTextView.getText().toString();
-       // inputLangTextView.setText(translationLangTextView.getText().toString());
-       // translationLangTextView.setText(inputLangDisplay);
-
         String inputLang = Preferences.get(Preferences.input_lang, getActivity());
         String translationLang = Preferences.get(Preferences.translation_lang, getActivity());
 
         setTranslationLang(inputLang);
         setInputLang(translationLang);
-       // Preferences.set(Preferences.input_lang, translationLang, getActivity());
-        //Preferences.set(Preferences.translation_lang, inputLang, getActivity());
     }
 
 
@@ -667,7 +646,7 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
      * метод для перевода текста
      * @param inputText - текст, который необходимо перевести
      */
-    private void translateText(final String inputText) {
+    private void translateText(final String inputText, final boolean isNeededToSaveInHistory) {
         if(CommonFunctions.StringIsNullOrEmpty(inputText)) {
             return;
         }
@@ -705,7 +684,9 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
                 //добавляем перевод в кэш
                 chache.add(translation);
 
-
+                if(isNeededToSaveInHistory) {
+                    saveInHistory(result);
+                }
             }
 
             @Override
@@ -794,33 +775,6 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
     }
 
 
-    /**
-     * открытие перевода с других страниц
-     * @param translation - перевод
-     */
-    @Override
-    public void showTranslation(final Translation translation) {
-        showTranslation = true;
-
-        translationLayout.setVisibility(View.VISIBLE);
-
-        updateFavoriteButton(translation.isFavorite());
-
-        resultTextView.post(new Runnable() {
-            public void run() {
-                resultTextView.setText(translation.getTranslationText());
-            }
-        });
-
-        inputEditText.setText(translation.getInputText());
-
-        setTranslationLang(translation.getTranslationLang());
-        setInputLang(translation.getInputLang());
-
-        lookupInDictionary(translation);
-
-    }
-
 
     @Override
     public void onDestroyView() {
@@ -828,4 +782,50 @@ public class TranslateFragment extends Fragment implements OnShowTranslationInte
         Preferences.set(Preferences.last_translation, inputEditText.getText().toString(), getActivity());
     }
 
+    @Override
+    public void updateFragmentState(int action, Translation translation) {
+        switch (action) {
+            case TranslationFragment.ACTION_SHOW_FRAGMENT:
+                showTranslate(translation);
+                break;
+
+            case TranslationFragment.ACTION_UPDATE_FAVORITE_BUTTON:
+                Translation currentTranslation = getCurrentTranslation();
+
+                if(translation.getInputLang().equals(currentTranslation.getInputLang()) &&
+                        translation.getInputText().equals(currentTranslation.getInputText()) &&
+                        translation.getTranslationLang().equals(currentTranslation.getTranslationLang())) {
+                    updateFavoriteButton(new TranslationDBInterface(getActivity()).checkFavorite(translation));
+                    chache.update(translation);
+                }
+
+                break;
+        }
+    }
+
+
+    private void showTranslate(final Translation translation) {
+        try {
+            showTranslation = true;
+
+            translationLayout.setVisibility(View.VISIBLE);
+
+            updateFavoriteButton(translation.isFavorite());
+
+            resultTextView.post(new Runnable() {
+                public void run() {
+                    resultTextView.setText(translation.getTranslationText());
+                }
+            });
+
+            inputEditText.setText(translation.getInputText());
+
+            setTranslationLang(translation.getTranslationLang());
+            setInputLang(translation.getInputLang());
+
+            lookupInDictionary(translation);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

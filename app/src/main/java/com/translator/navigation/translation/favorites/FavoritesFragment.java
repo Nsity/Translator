@@ -30,7 +30,7 @@ public class FavoritesFragment extends TranslationFragment {
         favorite = new Favorite(getActivity());
 
         arrayList = new ArrayList<>();
-        adapter = new TranslationAdapter(getActivity(), arrayList);
+        adapter = new TranslationAdapter(getActivity(), arrayList, onChangedTranslateFragmentListener);
         listView.setAdapter(adapter);
 
 

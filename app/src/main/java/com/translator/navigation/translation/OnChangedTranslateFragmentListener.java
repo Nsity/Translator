@@ -6,7 +6,7 @@ import com.translator.navigation.Translation;
  * Created by fedorova on 04.04.2017.
  */
 
-public interface OnChangedFragmentInterface {
+public interface OnChangedTranslateFragmentListener {
 
-    public void showFragment(Translation translation);
+    public void makeAction(int action, Translation translation);
 }
