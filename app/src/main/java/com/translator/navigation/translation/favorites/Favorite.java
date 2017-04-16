@@ -3,6 +3,7 @@ package com.translator.navigation.translation.favorites;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.translator.navigation.Translation;
 import com.translator.navigation.Translations;
 import com.translator.system.CommonFunctions;
 

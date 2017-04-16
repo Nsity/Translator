@@ -3,6 +3,7 @@ package com.translator.navigation.translation;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -49,9 +50,12 @@ public abstract class TranslationFragment extends Fragment {
 
     public static final int ACTION_SHOW_FRAGMENT = 1;
     public static final int ACTION_UPDATE_FAVORITE_BUTTON = 2;
+    public static final int ACTION_DELETE_TRANSLATION = 3;
 
 
     protected OnChangedTranslateFragmentListener onChangedTranslateFragmentListener;
+
+    protected SearchTextWatcher searchTextWatcher;
 
     @Nullable
     @Override
@@ -72,26 +76,9 @@ public abstract class TranslationFragment extends Fragment {
         setHasOptionsMenu(true);
 
         //-----------------------//
-        searchEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(CommonFunctions.StringIsNullOrEmpty(searchEditText.getText().toString())) {
-                    clearButton.setVisibility(View.GONE);
-                } else {
-                    clearButton.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                search();
-            }
-        });
+        searchTextWatcher = new SearchTextWatcher();
+        searchEditText.addTextChangedListener(searchTextWatcher);
 
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,15 +108,7 @@ public abstract class TranslationFragment extends Fragment {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-
-                    searchEditText.clearFocus();
-                    try {
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
+                    hideKeyboard();
                     return true;
                 }
                 return false;
@@ -138,15 +117,40 @@ public abstract class TranslationFragment extends Fragment {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
+                hideKeyboard();
+
                 Translation translation = arrayList.get(i);
                 onChangedTranslateFragmentListener.makeAction(ACTION_SHOW_FRAGMENT, translation);
+
             }
         });
 
         return rootView;
     }
 
+
+
+    private class SearchTextWatcher implements TextWatcher {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            if(CommonFunctions.StringIsNullOrEmpty(searchEditText.getText().toString())) {
+                clearButton.setVisibility(View.GONE);
+            } else {
+                clearButton.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            search();
+        }
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -185,5 +189,16 @@ public abstract class TranslationFragment extends Fragment {
 
         }
 
+    }
+
+
+    protected void hideKeyboard() {
+        try {
+            searchEditText.clearFocus();
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

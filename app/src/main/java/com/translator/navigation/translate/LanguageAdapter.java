@@ -11,7 +11,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.translator.R;
-import com.translator.system.Language;
 
 import java.util.ArrayList;
 

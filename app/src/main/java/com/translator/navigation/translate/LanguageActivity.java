@@ -10,7 +10,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.translator.R;
-import com.translator.system.Language;
 import com.translator.system.Preferences;
 
 import java.util.ArrayList;

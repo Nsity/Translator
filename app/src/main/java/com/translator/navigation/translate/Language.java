@@ -1,4 +1,4 @@
-package com.translator.system;
+package com.translator.navigation.translate;
 
 
 /**

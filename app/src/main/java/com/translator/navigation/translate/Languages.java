@@ -3,7 +3,6 @@ package com.translator.navigation.translate;
 import android.content.Context;
 import android.database.Cursor;
 
-import com.translator.system.Language;
 import com.translator.system.database.LanguageDBInterface;
 
 import java.util.ArrayList;

@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 
 import com.translator.R;
+import com.translator.navigation.Translation;
 import com.translator.navigation.translation.TranslationAdapter;
 import com.translator.navigation.translation.TranslationFragment;
 
@@ -47,12 +48,21 @@ public class HistoryFragment extends TranslationFragment {
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+                                        hideKeyboard();
 
+                                        Translation translation = history.getTranslations().get(i);
                                         history.deleteItem(i);
 
                                         updateView(false);
 
                                         dialog.dismiss();
+
+                                        try {
+                                            onChangedTranslateFragmentListener.makeAction(TranslationFragment.ACTION_DELETE_TRANSLATION,
+                                                    translation);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
                                     }
                                 })
                         .setNegativeButton(getResources().getString(R.string.no).toUpperCase(),
@@ -95,6 +105,12 @@ public class HistoryFragment extends TranslationFragment {
                 searchEditText.setVisibility(View.VISIBLE);
             } else {
                 searchEditText.setVisibility(View.GONE);
+                clearButton.setVisibility(View.GONE);
+
+
+                searchEditText.removeTextChangedListener(searchTextWatcher);
+                searchEditText.setText("");
+                searchEditText.addTextChangedListener(searchTextWatcher);
             }
 
             noTranslationsLayout.setVisibility(View.VISIBLE);
@@ -110,14 +126,7 @@ public class HistoryFragment extends TranslationFragment {
 
     @Override
     protected void deleteAll() {
-        try {
-            searchEditText.clearFocus();
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        hideKeyboard();
 
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setTitle(getString(R.string.text_history))
@@ -132,6 +141,12 @@ public class HistoryFragment extends TranslationFragment {
                                 updateView(false);
 
                                 dialog.dismiss();
+
+                                try {
+                                    onChangedTranslateFragmentListener.makeAction(TranslationFragment.ACTION_DELETE_TRANSLATION, null);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         })
                 .setNegativeButton(getResources().getString(R.string.no).toUpperCase(),

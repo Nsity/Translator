@@ -24,8 +24,6 @@ public class Preferences {
         if (sPref == null)
             sPref = context.getSharedPreferences(accountType, Context.MODE_PRIVATE);
 
-        Log.i("TAG", value);
-
         sPref.edit().putString(fieldName, value).apply();
     }
 

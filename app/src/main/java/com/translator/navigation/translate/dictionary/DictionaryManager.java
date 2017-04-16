@@ -57,7 +57,6 @@ public class DictionaryManager {
                             return;
                         }
                         JSONObject response = (JSONObject) object.getResponse();
-                        Log.i("TAG", response.toString());
 
                         TranslateFullResponse translateFullResponse = DictionaryConverter.convert(context, response);
 

@@ -146,41 +146,6 @@ public class MainActivity extends AppCompatActivity implements OnChangedTranslat
         transaction.commit();
     }
 
-   /* private void displayView(int itemId) {
-        setUpToolbar(itemId);
-
-        final FragmentTransaction transaction = fragmentManager.beginTransaction();
-
-        int position = getPosition(itemId);
-
-        //http://stackoverflow.com/questions/4932462/animate-the-transition-between-fragments
-        if(selectedPosition != position) {
-            if(selectedPosition < position) {
-                //right
-                transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left,
-                        R.anim.enter_from_left, R.anim.exit_to_right);
-            } else {
-                //left
-                transaction.setCustomAnimations(R.anim.enter_from_left,
-                        R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }
-
-        selectedPosition = position;
-
-        switch (itemId) {
-            case R.id.action_translate:
-                transaction.replace(R.id.main_container, translateFragment).commit();
-                break;
-            case R.id.action_history:
-                transaction.replace(R.id.main_container, historyFragment).commit();
-                break;
-            case R.id.action_favorites:
-                transaction.replace(R.id.main_container, favoritesFragment).commit();
-                break;
-        }
-    }*/
-
     private void setUpToolbar(int id) {
         if(toolbar == null)
             return;
@@ -285,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements OnChangedTranslat
                 onChangedStateFragmentListener.updateFragmentState(action, translation);
                 break;
 
-            case TranslationFragment.ACTION_UPDATE_FAVORITE_BUTTON:
+            case TranslationFragment.ACTION_UPDATE_FAVORITE_BUTTON: case TranslationFragment.ACTION_DELETE_TRANSLATION:
                 onChangedStateFragmentListener.updateFragmentState(action, translation);
                 break;
         }

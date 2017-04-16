@@ -38,6 +38,8 @@ import com.translator.navigation.translate.dictionary.DictionaryPairs;
 import com.translator.navigation.translate.dictionary.TranslateFullResponse;
 import com.translator.navigation.translation.OnChangedStateFragmentListener;
 import com.translator.navigation.translation.TranslationFragment;
+import com.translator.navigation.translation.favorites.Favorite;
+import com.translator.navigation.translation.history.History;
 import com.translator.system.CommonFunctions;
 import com.translator.system.Preferences;
 import com.translator.system.Snackbar;
@@ -487,24 +489,16 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
                         case LanguageActivity.INPUT_LANG:
                             if(selectedLang.equals(translationLang)) {
                                 setTranslationLang(inputLang);
-                                //Preferences.set(Preferences.translation_lang, inputLang, getActivity());
-                                //setTranslationLangTextView();
                             }
 
                             setInputLang(selectedLang);
-                            //Preferences.set(Preferences.input_lang, selectedLang, getActivity());
-                            //setInputLangTextView();
                             break;
                         case LanguageActivity.TRANSLATION_LANG:
                             if(selectedLang.equals(inputLang)) {
                                 setInputLang(translationLang);
-                               // Preferences.set(Preferences.input_lang, translationLang, getActivity());
-                                //setInputLangTextView();
                             }
 
                             setTranslationLang(selectedLang);
-                            //Preferences.set(Preferences.translation_lang, selectedLang, getActivity());
-                            //setTranslationLangTextView();
                             break;
 
                     }
@@ -568,7 +562,6 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
                         return;
                     }
 
-                    String inputText = inputEditText.getText().toString().trim();
                     inputEditText.setText(resultTextView.getText().toString().trim());
 
                     try {
@@ -666,9 +659,24 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
 
         //ищем перевод в кэше
         Translation translationInChache = chache.findInChache(translation);
+
         if(translationInChache != null) {
             setTranslation(translationInChache);
             return;
+        } else {
+            History history = new History(getActivity());
+            Translation translationInHistory = history.find(translation);
+            if(translationInHistory != null) {
+                setTranslation(translationInHistory);
+                return;
+            } else {
+                Favorite favorite = new Favorite(getActivity());
+                Translation translationInFavorite = favorite.find(translation);
+                if(translationInFavorite != null) {
+                    setTranslation(translationInFavorite);
+                    return;
+                }
+            }
         }
 
         TranslationManager.translate(getActivity(), translation, new CallBack<Translation>() {
@@ -758,7 +766,6 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
 
 
     private void lookup(final Translation translation) {
-        Log.i("TAG", "lookup");
         DictionaryManager.lookup(getActivity(), translation, new CallBack<TranslateFullResponse>() {
             @Override
             public void onSuccess(TranslateFullResponse result) {
@@ -784,13 +791,38 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
 
     @Override
     public void updateFragmentState(int action, Translation translation) {
+
+        Translation currentTranslation = getCurrentTranslation();
+
         switch (action) {
             case TranslationFragment.ACTION_SHOW_FRAGMENT:
+                if(translation == null) {
+                    return;
+                }
+
                 showTranslate(translation);
                 break;
 
             case TranslationFragment.ACTION_UPDATE_FAVORITE_BUTTON:
-                Translation currentTranslation = getCurrentTranslation();
+                if(translation == null) {
+                    return;
+                }
+
+                if(translation.getInputLang().equals(currentTranslation.getInputLang()) &&
+                        translation.getInputText().equals(currentTranslation.getInputText()) &&
+                        translation.getTranslationLang().equals(currentTranslation.getTranslationLang())) {
+                    updateFavoriteButton(new TranslationDBInterface(getActivity()).checkFavorite(translation));
+                    chache.update(translation);
+                }
+
+                break;
+            case TranslationFragment.ACTION_DELETE_TRANSLATION:
+                //удалили все
+                if(translation == null) {
+                    updateFavoriteButton(new TranslationDBInterface(getActivity()).checkFavorite(currentTranslation));
+                    chache.update(getActivity());
+                    return;
+                }
 
                 if(translation.getInputLang().equals(currentTranslation.getInputLang()) &&
                         translation.getInputText().equals(currentTranslation.getInputText()) &&

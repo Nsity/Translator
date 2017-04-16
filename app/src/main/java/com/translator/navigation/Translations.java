@@ -59,6 +59,18 @@ public abstract class Translations {
 
     protected abstract void search(String query);
 
+    public Translation find(Translation translation) {
+        for (Translation translationInDB: arrayList) {
+            if(translation.getInputLang().equals(translationInDB.getInputLang()) &&
+                    translation.getInputText().equals(translationInDB.getInputText()) &&
+                    translation.getTranslationLang().equals(translationInDB.getTranslationLang())) {
+                return translationInDB;
+            }
+        }
+
+        return null;
+    }
+
     public ArrayList<Translation> getTranslations() {
         return arrayList;
     }
