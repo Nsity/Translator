@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.translator.R;
 import com.translator.navigation.translate.Languages;
+import com.translator.navigation.translate.dictionary.DictionaryManager;
+import com.translator.navigation.translate.dictionary.DictionaryPairs;
 import com.translator.system.CommonFunctions;
 import com.translator.system.Preferences;
 import com.translator.system.network.CallBack;
@@ -27,6 +29,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private LinearLayout errorLayout;
     private TextView appNameTextView, errorTextView, errorDescriptionTextView;
+    private DictionaryPairs dictionaryPairs;
 
 
     @Override
@@ -75,6 +78,8 @@ public class SplashActivity extends AppCompatActivity {
         //получаем список загруженных языков
         int langCount = new Languages(getApplicationContext()).getLanguages().size();
 
+        dictionaryPairs = new DictionaryPairs(getApplicationContext());
+
         //если нет Интернета и не загружены языки, то показываем ошибку
         if(!Server.isOnline(getApplicationContext()) && langCount == 0) {
             showError(getString(R.string.connection_error), getString(R.string.check_internet_connection_and_try_again));
@@ -87,6 +92,11 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         if(langCount != 0) {
+            if(dictionaryPairs.getPairs().size() == 0) {
+                loadDictionaryPairs();
+                return;
+            }
+
             //показываем экран загрузки
             showSplash();
         } else {
@@ -152,6 +162,27 @@ public class SplashActivity extends AppCompatActivity {
      */
     private void loadLanguages() {
         TranslationManager.getLanguages(getApplicationContext(), Locale.getDefault().getLanguage(), new CallBack() {
+            @Override
+            public void onSuccess() {
+
+                if(dictionaryPairs.getPairs().size() != 0) {
+                    openMainActivity();
+                    return;
+                }
+                loadDictionaryPairs();
+
+            }
+
+            @Override
+            public void onFail(String message) {
+                showError(getString(R.string.error_occurred), getString(R.string.try_again_later));
+            }
+        });
+    }
+
+
+    private void loadDictionaryPairs() {
+        DictionaryManager.getLangs(getApplicationContext(), new CallBack(){
             @Override
             public void onSuccess() {
                 openMainActivity();

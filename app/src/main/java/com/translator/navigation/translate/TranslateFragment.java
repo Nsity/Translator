@@ -78,9 +78,6 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
 
     private DictionaryPairs dictionaryPairs = null;
 
-    //TODO
-    //кнопка избранное сломалась!!!
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -130,6 +127,9 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
 
         //кэш
         chache = new Chache();
+
+
+        dictionaryPairs = new DictionaryPairs(getActivity());
 
         TextView yandexTranslateTextView = (TextView) rootView.findViewById(R.id.yandex_translate);
 
@@ -740,22 +740,7 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
             return;
         }
 
-        if(dictionaryPairs == null) {
-            dictionaryPairs = new DictionaryPairs(getActivity());
-        }
-
         if(dictionaryPairs.getPairs().size() == 0) {
-            DictionaryManager.getLangs(getActivity(), new CallBack(){
-                @Override
-                public void onSuccess() {
-                    dictionaryPairs.loadFromDB();
-
-                    if(dictionaryPairs.findPair(translation.getInputLang(), translation.getTranslationLang())) {
-                        lookup(translation);
-                    }
-                }
-            });
-
             return;
         }
 
