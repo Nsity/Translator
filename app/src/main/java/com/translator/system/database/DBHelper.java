@@ -1,6 +1,7 @@
 package com.translator.system.database;
 
 import android.content.Context;
+import android.database.CharArrayBuffer;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -27,6 +28,7 @@ public class DBHelper extends SQLiteOpenHelper {
         database.execSQL(LanguageDBInterface.LANGUAGE_TABLE_CREATE);
         database.execSQL(TranslationDBInterface.TRANSLATION_TABLE_CREATE);
         database.execSQL(DictionaryDBInterface.DICTIONARY_TABLE_CREATE);
+        database.execSQL(CacheDBInterface.CACHE_TABLE_CREATE);
     }
 
     @Override
@@ -34,6 +36,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + LanguageDBInterface.LANGUAGE_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TranslationDBInterface.TRANSLATION_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + DictionaryDBInterface.DICTIONARY_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + CacheDBInterface.CACHE_TABLE_NAME);
 
 
         onCreate(db);

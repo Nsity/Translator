@@ -52,6 +52,7 @@ public class FavoritesFragment extends TranslationFragment {
                                         hideKeyboard();
 
                                         Translation translation = favorite.getTranslations().get(i);
+                                        translation.setFavorite(false);
 
                                         favorite.deleteItem(i);
 

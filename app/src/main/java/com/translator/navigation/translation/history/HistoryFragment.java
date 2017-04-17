@@ -136,11 +136,10 @@ public class HistoryFragment extends TranslationFragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
 
                                 history.delete();
                                 updateView(false);
-
-                                dialog.dismiss();
 
                                 try {
                                     onChangedTranslateFragmentListener.makeAction(TranslationFragment.ACTION_DELETE_TRANSLATION, null);

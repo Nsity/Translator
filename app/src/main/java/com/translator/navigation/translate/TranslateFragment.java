@@ -14,7 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -38,8 +37,6 @@ import com.translator.navigation.translate.dictionary.DictionaryPairs;
 import com.translator.navigation.translate.dictionary.TranslateFullResponse;
 import com.translator.navigation.translation.OnChangedStateFragmentListener;
 import com.translator.navigation.translation.TranslationFragment;
-import com.translator.navigation.translation.favorites.Favorite;
-import com.translator.navigation.translation.history.History;
 import com.translator.system.CommonFunctions;
 import com.translator.system.Preferences;
 import com.translator.system.Snackbar;
@@ -70,7 +67,7 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
     private ImageButton favoriteButton;
 
     private boolean showTranslation = false;
-    private Chache chache;
+    private Cache cache;
 
     public static final int DISABLED_FAVORITE = R.color.colorGray7;
     public static final int ACTIVE_FAVORITE =  R.color.colorPrimary;
@@ -116,18 +113,21 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
         handler.post(new Runnable() {
             @Override
             public void run() {
-                inputEditText.requestFocus();
-                InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                try {
+                    inputEditText.requestFocus();
+                    InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
 
-                mgr.showSoftInput(inputEditText, InputMethodManager.SHOW_IMPLICIT);
+                    mgr.showSoftInput(inputEditText, InputMethodManager.SHOW_IMPLICIT);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
 
         //кэш
-        chache = new Chache();
-
+        cache = new Cache(getActivity());
 
         dictionaryPairs = new DictionaryPairs(getActivity());
 
@@ -159,7 +159,7 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
 
                 translation.save();
 
-                chache.update(translation);
+                cache.updateFavorite(translation);
 
             }
         });
@@ -404,7 +404,13 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
             return;
         }
 
-        translation.setFavorite(checkFavorite());
+        Translation translationInCache = cache.find(translation);
+        if(translationInCache != null) {
+            translation = translationInCache;
+        } else {
+            translation.setFavorite(checkFavorite());
+        }
+
         translation.setInHistory(true);
 
         translation.save();
@@ -422,11 +428,15 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
      * метод для очистки превода
      */
     private void clearTranslation() {
-        resultTextView.setText("");
-        updateFavoriteButton(false);
-        dictLayout.removeAllViews();
+        try {
+            resultTextView.setText("");
+            updateFavoriteButton(false);
+            dictLayout.removeAllViews();
 
-        translationLayout.setVisibility(View.GONE);
+            translationLayout.setVisibility(View.GONE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -435,10 +445,14 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
      * @param errorDescription - описание
      */
     private void showError(String error, String errorDescription) {
-        translationLayout.setVisibility(View.GONE);
-        errorLayout.setVisibility(View.VISIBLE);
-        errorTextView.setText(error);
-        errorDescriptionTextView.setText(errorDescription);
+        try {
+            translationLayout.setVisibility(View.GONE);
+            errorLayout.setVisibility(View.VISIBLE);
+            errorTextView.setText(error);
+            errorDescriptionTextView.setText(errorDescription);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -465,8 +479,12 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
      * скрытие ошибки
      */
     private void hideError() {
-        translationLayout.setVisibility(View.VISIBLE);
-        errorLayout.setVisibility(View.GONE);
+        try {
+            translationLayout.setVisibility(View.VISIBLE);
+            errorLayout.setVisibility(View.GONE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -618,20 +636,25 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
 
 
     private void setTranslation(final Translation translation) {
-        translationLayout.setVisibility(View.VISIBLE);
+        try {
+            translationLayout.setVisibility(View.VISIBLE);
 
-        //записываем результат
-        if(translation.getInputText().equals(inputEditText.getText().toString())) {
-            resultTextView.post(new Runnable() {
-                public void run() {
-                    resultTextView.setText(translation.getTranslationText());
-                }
-            });
+            //записываем результат
+            if (translation.getInputText().equals(inputEditText.getText().toString())) {
+                resultTextView.post(new Runnable() {
+                    public void run() {
+                        resultTextView.setText(translation.getTranslationText());
+                    }
+                });
+            }
+
+            updateFavoriteButton(translation.isFavorite());
+
+            lookupInDictionary(translation);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        updateFavoriteButton(translation.isFavorite());
-
-        lookupInDictionary(translation);
     }
 
 
@@ -640,7 +663,7 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
      * @param inputText - текст, который необходимо перевести
      */
     private void translateText(final String inputText, final boolean isNeededToSaveInHistory) {
-        if(CommonFunctions.StringIsNullOrEmpty(inputText)) {
+        if(CommonFunctions.StringIsNullOrEmpty(inputText) || getActivity() == null || !isAdded()) {
             return;
         }
         hideError();
@@ -658,13 +681,14 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
         translation.setTranslationLang(Preferences.get(Preferences.translation_lang, getActivity()));
 
         //ищем перевод в кэше
-        Translation translationInChache = chache.findInChache(translation);
+       // Translation translationInCache = chache.findInChache(translation);
+        Translation translationInCache = cache.find(translation);
 
-        if(translationInChache != null) {
-            setTranslation(translationInChache);
+        if(translationInCache != null) {
+            setTranslation(translationInCache);
             return;
         } else {
-            History history = new History(getActivity());
+          /*  History history = new History(getActivity());
             Translation translationInHistory = history.find(translation);
             if(translationInHistory != null) {
                 setTranslation(translationInHistory);
@@ -676,7 +700,7 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
                     setTranslation(translationInFavorite);
                     return;
                 }
-            }
+            }*/
         }
 
         TranslationManager.translate(getActivity(), translation, new CallBack<Translation>() {
@@ -690,7 +714,8 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
 
                 setTranslation(result);
                 //добавляем перевод в кэш
-                chache.add(translation);
+                //chache.add(translation);
+                cache.add(translation);
 
                 if(isNeededToSaveInHistory) {
                     saveInHistory(result);
@@ -731,6 +756,10 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
      * @param translation - перевод
      */
     private void lookupInDictionary(final Translation translation) {
+        if(getActivity() == null || !isAdded()) {
+            return;
+        }
+
         dictLayout.removeAllViews();
 
         hideError();
@@ -796,8 +825,8 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
                 if(translation.getInputLang().equals(currentTranslation.getInputLang()) &&
                         translation.getInputText().equals(currentTranslation.getInputText()) &&
                         translation.getTranslationLang().equals(currentTranslation.getTranslationLang())) {
-                    updateFavoriteButton(new TranslationDBInterface(getActivity()).checkFavorite(translation));
-                    chache.update(translation);
+                    updateFavoriteButton(translation.isFavorite());
+                    cache.updateFavorite(translation);
                 }
 
                 break;
@@ -805,15 +834,26 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
                 //удалили все
                 if(translation == null) {
                     updateFavoriteButton(new TranslationDBInterface(getActivity()).checkFavorite(currentTranslation));
-                    chache.update(getActivity());
+
+                    try {
+                        Thread t = new Thread() {
+                            public void run() {
+                                cache.updateAll();
+                            }
+                        };
+                        t.start();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                     return;
                 }
 
                 if(translation.getInputLang().equals(currentTranslation.getInputLang()) &&
                         translation.getInputText().equals(currentTranslation.getInputText()) &&
                         translation.getTranslationLang().equals(currentTranslation.getTranslationLang())) {
-                    updateFavoriteButton(new TranslationDBInterface(getActivity()).checkFavorite(translation));
-                    chache.update(translation);
+                    updateFavoriteButton(translation.isFavorite());
+                    cache.updateFavorite(translation);
                 }
 
                 break;

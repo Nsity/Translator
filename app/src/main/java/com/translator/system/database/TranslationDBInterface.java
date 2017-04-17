@@ -48,7 +48,8 @@ public class TranslationDBInterface extends ADBWorker {
                 TRANSLATION_COLUMN_TRANSLATION_TEXT + " =? AND " + TRANSLATION_COLUMN_TRANSLATION_LANG + " =? AND " +
                 TRANSLATION_COLUMN_IN_FAVORITE + " = 1";
 
-        Cursor cursor = getCursor(selectQuery, new String[]{translation.getInputText(), translation.getInputLang(), translation.getTranslationText(), translation.getTranslationLang()});
+        Cursor cursor = getCursor(selectQuery, new String[]{translation.getInputText(),
+                translation.getInputLang(), translation.getTranslationText(), translation.getTranslationLang()});
 
         boolean result = cursor != null && cursor.getCount() > 0;
 
