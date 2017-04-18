@@ -154,6 +154,12 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
 
                 Translation translation = getCurrentTranslation();
 
+
+                Translation translationInCache = cache.find(translation);
+                if(translationInCache != null) {
+                    translation = translationInCache;
+                }
+
                 translation.setFavorite(checkFavorite());
                 translation.setInHistory(true);
 
@@ -256,10 +262,25 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
                         e.printStackTrace();
                     }
 
-                    //сохраняем перевод в историю
+                    //если поле не пустое
+                    if(CommonFunctions.StringIsNullOrEmpty(inputEditText.getText().toString()) ||
+                            CommonFunctions.StringIsNullOrEmpty(resultTextView.getText().toString()) || !Server.isOnline(getActivity())) {
+                        return;
+                    }
+
                     Translation translation = getCurrentTranslation();
 
-                    saveInHistory(translation);
+                    Translation translationInCache = cache.find(translation);
+                    if(translationInCache != null) {
+                        translation = translationInCache;
+                    }
+
+                    translation.setFavorite(checkFavorite());
+                    translation.setInHistory(true);
+
+                    translation.save();
+
+                    cache.updateFavorite(translation);
 
                 }
             }
@@ -394,26 +415,6 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
 
 
         return rootView;
-    }
-
-
-    private void saveInHistory(Translation translation) {
-        //если поле не пустое
-        if (CommonFunctions.StringIsNullOrEmpty(inputEditText.getText().toString()) ||
-                CommonFunctions.StringIsNullOrEmpty(resultTextView.getText().toString()) || !Server.isOnline(getActivity())) {
-            return;
-        }
-
-        Translation translationInCache = cache.find(translation);
-        if(translationInCache != null) {
-            translation = translationInCache;
-        } else {
-            translation.setFavorite(checkFavorite());
-        }
-
-        translation.setInHistory(true);
-
-        translation.save();
     }
 
     /**
@@ -640,7 +641,7 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
             translationLayout.setVisibility(View.VISIBLE);
 
             //записываем результат
-            if (translation.getInputText().equals(inputEditText.getText().toString())) {
+            if (translation.getInputText().equals(inputEditText.getText().toString().trim())) {
                 resultTextView.post(new Runnable() {
                     public void run() {
                         resultTextView.setText(translation.getTranslationText());
@@ -662,7 +663,7 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
      * метод для перевода текста
      * @param inputText - текст, который необходимо перевести
      */
-    private void translateText(final String inputText, final boolean isNeededToSaveInHistory) {
+    private void translateText(String inputText, final boolean isNeededToSaveInHistory) {
         if(CommonFunctions.StringIsNullOrEmpty(inputText) || getActivity() == null || !isAdded()) {
             return;
         }
@@ -676,31 +677,23 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
         }
 
         final Translation translation = new Translation(getActivity());
-        translation.setInputText(inputText);
+        translation.setInputText(inputText.trim());
         translation.setInputLang(Preferences.get(Preferences.input_lang, getActivity()));
         translation.setTranslationLang(Preferences.get(Preferences.translation_lang, getActivity()));
+        translation.setFavorite(checkFavorite());
 
         //ищем перевод в кэше
-       // Translation translationInCache = chache.findInChache(translation);
         Translation translationInCache = cache.find(translation);
 
         if(translationInCache != null) {
             setTranslation(translationInCache);
+
+            if(isNeededToSaveInHistory) {
+                translationInCache.setInHistory(true);
+                translationInCache.save();
+            }
+
             return;
-        } else {
-          /*  History history = new History(getActivity());
-            Translation translationInHistory = history.find(translation);
-            if(translationInHistory != null) {
-                setTranslation(translationInHistory);
-                return;
-            } else {
-                Favorite favorite = new Favorite(getActivity());
-                Translation translationInFavorite = favorite.find(translation);
-                if(translationInFavorite != null) {
-                    setTranslation(translationInFavorite);
-                    return;
-                }
-            }*/
         }
 
         TranslationManager.translate(getActivity(), translation, new CallBack<Translation>() {
@@ -714,11 +707,11 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
 
                 setTranslation(result);
                 //добавляем перевод в кэш
-                //chache.add(translation);
-                cache.add(translation);
+                cache.add(result);
 
                 if(isNeededToSaveInHistory) {
-                    saveInHistory(result);
+                    result.setInHistory(true);
+                    result.save();
                 }
             }
 
@@ -783,7 +776,7 @@ public class TranslateFragment extends Fragment implements OnChangedStateFragmen
         DictionaryManager.lookup(getActivity(), translation, new CallBack<TranslateFullResponse>() {
             @Override
             public void onSuccess(TranslateFullResponse result) {
-                if(inputEditText.getText().toString().equals(translation.getInputText())) {
+                if(inputEditText.getText().toString().trim().equals(translation.getInputText())) {
                     setDictionaryTranslation(result);
                 }
             }
