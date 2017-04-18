@@ -8,4 +8,5 @@
     android:textColor="@color/green_color_8"
     android:textSize="18sp"
     android:textStyle="italic"
+    android:paddingRight="8dp"
     tools:text="take some time — занять некоторое время"/>
