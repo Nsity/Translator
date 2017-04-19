@@ -17,4 +17,13 @@ targetSdkVersion 25
 * Возможность просмотра избранного;
 * Перевод с одного языка на другой с помощью API Яндекс.Переводчика.
 
-![app_icon](https://raw.githubusercontent.com/Nsity/Translator/master/app/src/main/res/mipmap-xhdpi/ic_launcher.png)
+
+## Скриншоты
+
+<img src="https://github.com/Nsity/Translator/blob/master/screenshots/translate.PNG"
+width="280">
+<img src="https://github.com/Nsity/Translator/blob/master/screenshots/history.PNG"
+width="280">
+<img src="https://github.com/Nsity/Translator/blob/master/screenshots/favorite.PNG"
+width="280">
+
